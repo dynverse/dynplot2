@@ -47,8 +47,6 @@ dynplot(dataset, layout = layout_onedim(dataset, equal_cell_width = TRUE, margin
 
 
 
-
-
 dynplot(dataset, layout = layout_dendro(dataset)) +
   geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
   geom_trajectory_connection() +

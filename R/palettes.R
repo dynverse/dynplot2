@@ -1,9 +1,8 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices rainbow
 #' @importFrom shades hue
-#' @importFrom rje cubeHelix
 milestone_palette_list <- list(
-  cubeHelix = function(n) rje::cubeHelix(n = n),
+  cubeHelix = function(n) cubeHelix(n = n),
   Set3 = function(n) {
     cols <- RColorBrewer::brewer.pal(max(3, n), "Set3")[seq_len(n)]
     cols[order(shades::hue(cols))]
