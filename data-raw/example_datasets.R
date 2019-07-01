@@ -1,3 +1,5 @@
+set.seed(1)
+
 example_linear <- dyntoy::generate_dataset(model = "linear")
 example_bifurcating <- dyntoy::generate_dataset(model = "bifurcating")
 example_tree <- dyntoy::generate_dataset(model = "tree")
