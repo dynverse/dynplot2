@@ -31,7 +31,6 @@ Imports:
   magrittr,
   methods,
   purrr,
-  rje,
   shades,
   RColorBrewer,
   reshape2,

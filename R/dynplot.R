@@ -128,7 +128,6 @@ aesIntersect <- function(aes1, aes2) {
 
 
 
-#' @importFrom stringr str_detect
 #' @export
 ggplot_build.dynplot <- function(plot) {
   # do some checks for aesthetics
@@ -142,7 +141,7 @@ ggplot_build.dynplot <- function(plot) {
     names()
 
   milestone_percentage_aesthetics_covered <- plot$scales$scales %>%
-    keep(~any(str_detect(class(.), "^ScaleMilestone"))) %>%
+    keep(~any(grepl(class(.), "^ScaleMilestone"))) %>%
     map(~.$aesthetics) %>%
     unlist()
 
