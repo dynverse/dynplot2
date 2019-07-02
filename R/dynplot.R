@@ -64,7 +64,7 @@ dynplot <- function(
       edge_info
     ))
 
-    if (c("segment_progressions") %in% names(layout)) {
+    if ("segment_progressions" %in% names(layout)) {
       # segment info (produced by layout)
       segment_info <- layout$segment_progressions %>%
         mutate(edge_id = paste0(from, "->", to)) %>%
@@ -141,7 +141,7 @@ ggplot_build.dynplot <- function(plot) {
     names()
 
   milestone_percentage_aesthetics_covered <- plot$scales$scales %>%
-    keep(~any(str_detect(class(.), "^ScaleMilestone"))) %>%
+    keep(~any(grepl(class(.), "^ScaleMilestone"))) %>%
     map(~.$aesthetics) %>%
     unlist()
 

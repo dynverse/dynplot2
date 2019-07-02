@@ -1,8 +1,7 @@
-# from package rje
+# copied from package rje because it was causing problems
 cubeHelix <- function (n, start = 0.5, r = -1.5, hue = 1, gamma = 1)
 {
-  M = matrix(c(-0.14861, -0.29227, 1.97294, 1.78277, -0.90649,
-               0), ncol = 2)
+  M = matrix(c(-0.14861, -0.29227, 1.97294, 1.78277, -0.90649, 0), ncol = 2)
   lambda = seq(0, 1, length.out = n)
   l = rep(lambda^gamma, each = 3)
   phi = 2 * pi * (start/3 + r * lambda)

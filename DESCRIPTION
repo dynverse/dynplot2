@@ -31,7 +31,6 @@ Imports:
   magrittr,
   methods,
   purrr,
-  rje,
   shades,
   RColorBrewer,
   reshape2,
@@ -44,10 +43,10 @@ Imports:
 Suggests:
   knitr,
   rmarkdown
-Remotes: 
-  dynverse/dynutils@devel,
-  dynverse/dyndimred@devel,
-  dynverse/dynwrap@devel,
-  dynverse/dynfeature@devel
+Remotes:  
+    dynverse/dynutils@devel,
+    dynverse/dyndimred@devel,
+    dynverse/dynwrap@devel,
+    dynverse/dynfeature@devel
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
