@@ -26,12 +26,109 @@ On linux, udunits2 has to be installed:
 The package provides different ways to plot both the topology and
 cellular properties of a trajectory:
 
-![](.readme_files/cells-1.png)<!-- -->
+``` r
+dynplot(dataset) +
+  geom_cell_point(aes(colour = select_expression("G1"))) +
+  scale_expression_fillcolour() + # a scale has to be given here, otherwise error
+  new_scale_fillcolour() +
+  geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour()
+```
 
-And to plot the expression and feature importances of many genes along
-the trajectory
+![](man/figures/README_unnamed-chunk-2-1.png)<!-- -->
 
-![](.readme_files/heatmap-1.png)<!-- -->
+``` r
+dynplot(dataset) +
+  geom_cell_point(color = "grey80") +
+  new_scale_fillcolour() +
+  geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour() +
+  geom_velocity_arrow(stat = stat_velocity_grid(grid_n = 20))
+```
+
+![](man/figures/README_unnamed-chunk-3-1.png)<!-- -->
+
+``` r
+dynplot(dataset, layout = layout_graph(dataset)) +
+  geom_trajectory_divergence() +
+  geom_trajectory_segments(size = 3, color = "#333333") +
+  new_scale_fillcolour() +
+  geom_cell_point(aes(colour = milestone_percentages)) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour()
+```
+
+![](man/figures/README_unnamed-chunk-4-1.png)<!-- -->
+
+``` r
+dynplot(dataset, layout = layout_onedim(dataset, equal_cell_width = TRUE, margin = 0.05)) +
+  geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
+  geom_trajectory_connection() +
+  scale_milestones_fillcolour() +
+  new_scale_fillcolour() +
+  geom_cell_point(aes(colour = select_expression("G2"))) +
+  scale_expression_fillcolour() +
+  new_scale_fillcolour() +
+  # geom_cell_point(aes(colour = milestone_percentages)) +
+  geom_milestone_label(aes(y = -0.1, fill = milestone_id, hjust = as.integer(type == "end"))) +
+  scale_milestones_fillcolour()
+```
+
+![](man/figures/README_unnamed-chunk-5-1.png)<!-- -->
+
+``` r
+dynplot(dataset, layout = layout_dendro(dataset)) +
+  geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
+  geom_trajectory_connection() +
+  scale_milestones_fillcolour() +
+  new_scale_fillcolour() +
+  geom_cell_point(aes(colour = select_expression("G1"))) +
+  scale_expression_fillcolour() +
+  new_scale_fillcolour() +
+  # geom_cell_point(aes(colour = milestone_percentages)) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour()
+```
+
+![](man/figures/README_unnamed-chunk-6-1.png)<!-- -->
+
+``` r
+dynplot(dataset, layout = layout_dendro(dataset)) +
+  geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
+  geom_trajectory_connection() +
+  scale_milestones_fillcolour() +
+  new_scale_fillcolour() +
+  geom_cell_point(aes(y = y + dynutils::scale_minmax(select_expression("G2")) * 0.5 - 0.25, colour = select_expression("G2"))) +
+  scale_expression_fillcolour() +
+  new_scale_fillcolour() +
+  # geom_cell_point(aes(colour = milestone_percentages)) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour()
+```
+
+![](man/figures/README_unnamed-chunk-7-1.png)<!-- -->
+
+``` r
+cell_layout <- layout_onedim(dataset)
+feature_modules <- get_features(dataset)
+feature_layout <- layout_modules(dataset, feature_modules = feature_modules, cell_layout = cell_layout)
+layout <- layout_heatmap(dataset, feature_layout = feature_layout)
+
+dynplot(dataset, layout = layout) +
+  geom_trajectory_segments(aes(color = milestone_percentages)) +
+  geom_trajectory_connection() +
+  geom_milestone_label(aes(fill = milestone_id, hjust = as.integer(type == "end"))) +
+  scale_milestones_fillcolour() +
+  new_scale_fillcolour() +
+  geom_expression_raster() +
+  scale_expression_fillcolour() +
+  new_scale_fillcolour() +
+  geom_tile(aes(x = x, y = 1))
+```
+
+![](man/figures/README_unnamed-chunk-8-1.png)<!-- -->
 
 ## Latest changes
 
