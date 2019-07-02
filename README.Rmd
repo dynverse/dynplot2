@@ -42,7 +42,7 @@ trajectory <- example_bifurcating
 trajectory <- trajectory %>% add_root()
 grouping <- trajectory$prior_information$groups_id
 groups <- tibble(dynwrap::group_onto_nearest_milestones(trajectory)) %>% 
-  mutate(color=dynplot:::milestone_palette_list$auto(n()))
+  mutate(color=dynplot2:::milestone_palette_list$auto(n()))
 features_oi <- apply(as.matrix(trajectory$counts), 2, sd) %>% sort() %>% names() %>% tail(10)
 feature_oi <- features_oi[[10]]
 ```
@@ -54,7 +54,7 @@ question <- empty + geom_text(aes(0, 0, label="????"))
 unavailable <- empty + geom_text(aes(0, 0, label="----"))
 
 title <- list(
-  dynplot:::empty_plot(), 
+  dynplot2:::empty_plot(), 
   # empty + geom_label(aes(0, 0, label="Topology")),
   empty + geom_label(aes(0, 0, label="Ordering")),
   empty + geom_label(aes(0, 0, label="Grouping/clustering")),

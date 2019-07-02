@@ -2,7 +2,7 @@ GeomTrajectorySegments <- ggproto(
   "GeomTrajectorySegments",
   GeomPath,
   default_aes = aesIntersect(aes(linejoin = "mitre", lineend = "square"), GeomPath$default_aes),
-  draw_panel = function(self, data, panel_params, coord, arrow = NULL, arrow_size = 1, shadow = dynplot::shadow(),  ...) {
+  draw_panel = function(self, data, panel_params, coord, arrow = NULL, arrow_size = 1, shadow = dynplot2::shadow(),  ...) {
     original_draw_panel <- GeomPath$draw_panel
 
     # draw path ---------
@@ -67,7 +67,7 @@ geom_trajectory_segments <- function(
   position_arrow = position_trajectory_arrows_middle(),
   arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type = "closed"),
   arrow_size = 1,
-  shadow = if("colour" %in% names(mapping)) {dynplot::shadow()} else {FALSE},
+  shadow = if("colour" %in% names(mapping)) {dynplot2::shadow()} else {FALSE},
   ...,
   data = construct_get_segment_info(position_arrow),
   show.legend = NA

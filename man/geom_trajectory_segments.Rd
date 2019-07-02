@@ -8,7 +8,7 @@ geom_trajectory_segments(mapping = NULL,
   position_arrow = position_trajectory_arrows_middle(),
   arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type =
   "closed"), arrow_size = 1, shadow = if ("colour" \%in\%
-  names(mapping)) {     dynplot::shadow() } else {     FALSE }, ...,
+  names(mapping)) {     dynplot2::shadow() } else {     FALSE }, ...,
   data = construct_get_segment_info(position_arrow), show.legend = NA)
 }
 \arguments{
