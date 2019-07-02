@@ -1,11 +1,13 @@
 ---
 output: github_document
+editor_options: 
+  chunk_output_type: console
 ---
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
 ```{r setup1, include=FALSE}
-knitr::opts_chunk$set(fig.path=".readme_files/", warning=FALSE, message=FALSE, error=FALSE, echo = TRUE)
+knitr::opts_chunk$set(fig.path = "man/figures/README_", warning=FALSE, message=FALSE, error=FALSE, echo = TRUE)
 ```
 
 <a href="https://travis-ci.org/dynverse/dynplot"><img src="https://travis-ci.org/dynverse/dynplot.svg" align="left"></a> <a href="https://codecov.io/gh/dynverse/dynplot"> <img src="https://codecov.io/gh/dynverse/dynplot/branch/master/graph/badge.svg" align="left" /></a>  [**ℹ️ Tutorials**](https://dynverse.org)  &nbsp;  &nbsp; [**ℹ️ Reference documentation**](https://dynverse.org/reference/dynplot) <br><img src="man/figures/logo.png" align="right" />
@@ -29,7 +31,7 @@ The package provides different ways to plot both the topology and cellular prope
 
 ```{r, echo=FALSE}
 library(dplyr)
-library(dynplot)
+library(dynplot2)
 library(dynutils)
 library(dynwrap)
 library(tidyverse)
@@ -37,80 +39,98 @@ library(tidyverse)
 library(patchwork)
 
 data(example_bifurcating)
-trajectory <- example_bifurcating
+dataset <- example_bifurcating %>% add_root() %>% add_dimred(dimred = dyndimred::dimred_landmark_mds)
+```
 
-trajectory <- trajectory %>% add_root()
-grouping <- trajectory$prior_information$groups_id
-groups <- tibble(dynwrap::group_onto_nearest_milestones(trajectory)) %>% 
-  mutate(color=dynplot2:::milestone_palette_list$auto(n()))
-features_oi <- apply(as.matrix(trajectory$counts), 2, sd) %>% sort() %>% names() %>% tail(10)
-feature_oi <- features_oi[[10]]
+```{r}
+dynplot(dataset) +
+  geom_cell_point(aes(colour = select_expression("G1"))) +
+  scale_expression_fillcolour() + # a scale has to be given here, otherwise error
+  new_scale_fillcolour() +
+  geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour()
+```
+
+```{r}
+dynplot(dataset) +
+  geom_cell_point(color = "grey80") +
+  new_scale_fillcolour() +
+  geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour() +
+  geom_velocity_arrow(stat = stat_velocity_grid(grid_n = 20))
+```
+
+```{r}
+dynplot(dataset, layout = layout_graph(dataset)) +
+  geom_trajectory_divergence() +
+  geom_trajectory_segments(size = 3, color = "#333333") +
+  new_scale_fillcolour() +
+  geom_cell_point(aes(colour = milestone_percentages)) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour()
+```
+
+```{r}
+dynplot(dataset, layout = layout_onedim(dataset, equal_cell_width = TRUE, margin = 0.05)) +
+  geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
+  geom_trajectory_connection() +
+  scale_milestones_fillcolour() +
+  new_scale_fillcolour() +
+  geom_cell_point(aes(colour = select_expression("G2"))) +
+  scale_expression_fillcolour() +
+  new_scale_fillcolour() +
+  # geom_cell_point(aes(colour = milestone_percentages)) +
+  geom_milestone_label(aes(y = -0.1, fill = milestone_id, hjust = as.integer(type == "end"))) +
+  scale_milestones_fillcolour()
+```
+
+```{r}
+dynplot(dataset, layout = layout_dendro(dataset)) +
+  geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
+  geom_trajectory_connection() +
+  scale_milestones_fillcolour() +
+  new_scale_fillcolour() +
+  geom_cell_point(aes(colour = select_expression("G1"))) +
+  scale_expression_fillcolour() +
+  new_scale_fillcolour() +
+  # geom_cell_point(aes(colour = milestone_percentages)) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour()
+```
+
+```{r}
+dynplot(dataset, layout = layout_dendro(dataset)) +
+  geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
+  geom_trajectory_connection() +
+  scale_milestones_fillcolour() +
+  new_scale_fillcolour() +
+  geom_cell_point(aes(y = y + dynutils::scale_minmax(select_expression("G2")) * 0.5 - 0.25, colour = select_expression("G2"))) +
+  scale_expression_fillcolour() +
+  new_scale_fillcolour() +
+  # geom_cell_point(aes(colour = milestone_percentages)) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour()
 ```
 
 
-```{r cells, fig.width=15, fig.height=10, echo=FALSE}
-empty <- ggplot() + theme_void()
-question <- empty + geom_text(aes(0, 0, label="????"))
-unavailable <- empty + geom_text(aes(0, 0, label="----"))
+```{r}
+cell_layout <- layout_onedim(dataset)
+feature_modules <- get_features(dataset)
+feature_layout <- layout_modules(dataset, feature_modules = feature_modules, cell_layout = cell_layout)
+layout <- layout_heatmap(dataset, feature_layout = feature_layout)
 
-title <- list(
-  dynplot2:::empty_plot(), 
-  # empty + geom_label(aes(0, 0, label="Topology")),
-  empty + geom_label(aes(0, 0, label="Ordering")),
-  empty + geom_label(aes(0, 0, label="Grouping/clustering")),
-  empty + geom_label(aes(0, 0, label="Expression of \n a single gene")), 
-  empty + geom_label(aes(0, 0, label="Pseudotime"))
-)
-
-dendro <- list(
-  empty + geom_label(aes(0, 0, label="Dendrogram")),
-  # plot_dendro(trajectory),
-  plot_dendro(trajectory, "milestone"),
-  plot_dendro(trajectory, grouping=grouping, groups=groups),
-  plot_dendro(trajectory, feature_oi=feature_oi),
-  plot_dendro(trajectory, "pseudotime")
-)
-
-onedim <- list(
-    empty + geom_label(aes(0, 0, label="Onedim")),
-    # plot_onedim(trajectory),
-    plot_onedim(trajectory, "milestone"),
-    plot_onedim(trajectory, grouping=grouping, groups=groups),
-    plot_onedim(trajectory, feature_oi=feature_oi),
-    plot_onedim(trajectory, "pseudotime")
-  )
-
-graph <- list(
-  empty + geom_label(aes(0, 0, label="Graph")),
-  # plot_graph(trajectory),
-  plot_graph(trajectory, "milestone"),
-  plot_graph(trajectory, grouping=grouping, groups=groups),
-  plot_graph(trajectory, feature_oi=feature_oi),
-  plot_graph(trajectory, "pseudotime")
-)
-
-dimred <- list(
-  empty + geom_label(aes(0, 0, label="Dimensionality reduction")),
-  # plot_dimred(trajectory),
-  plot_dimred(trajectory, "milestone"),
-  plot_dimred(trajectory, grouping=grouping, groups=groups),
-  plot_dimred(trajectory, feature_oi=feature_oi),
-  plot_dimred(trajectory, "pseudotime")
-)
-
-wrap_plots(
-  c(title, dendro, onedim, graph, dimred),
-  nrow=5,
-  byrow=TRUE
-) & theme(legend.position = "none")
-```
-
-
-And to plot the expression and feature importances of many genes along the trajectory
-
-```{r heatmap, echo=FALSE, fig.width=10, fig.height=6}
-cell_feature_importance <- dynfeature::calculate_cell_feature_importance(trajectory %>% dynwrap::add_waypoints())
-plot_heatmap(trajectory, grouping = trajectory$prior_information$grouping_assignment)
+dynplot(dataset, layout = layout) +
+  geom_trajectory_segments(aes(color = milestone_percentages)) +
+  geom_trajectory_connection() +
+  geom_milestone_label(aes(fill = milestone_id, hjust = as.integer(type == "end"))) +
+  scale_milestones_fillcolour() +
+  new_scale_fillcolour() +
+  geom_expression_raster() +
+  scale_expression_fillcolour() +
+  new_scale_fillcolour() +
+  geom_tile(aes(x = x, y = 1))
 ```
 
 ## Latest changes
