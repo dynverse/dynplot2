@@ -141,7 +141,7 @@ ggplot_build.dynplot <- function(plot) {
     names()
 
   milestone_percentage_aesthetics_covered <- plot$scales$scales %>%
-    keep(~any(grepl(class(.), "^ScaleMilestone"))) %>%
+    keep(~any(grepl("^ScaleMilestone", class(.)))) %>%
     map(~.$aesthetics) %>%
     unlist()
 

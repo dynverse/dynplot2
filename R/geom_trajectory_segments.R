@@ -2,7 +2,7 @@ GeomTrajectorySegments <- ggproto(
   "GeomTrajectorySegments",
   GeomPath,
   default_aes = aesIntersect(aes(linejoin = "mitre", lineend = "square"), GeomPath$default_aes),
-  draw_panel = function(self, data, panel_params, coord, arrow = NULL, arrow_size = 1, shadow = dynplot::shadow(),  ...) {
+  draw_panel = function(self, data, panel_params, coord, arrow = NULL, arrow_size = 1, shadow = shadow_defaults(),  ...) {
     original_draw_panel <- GeomPath$draw_panel
 
     # draw path ---------
@@ -19,7 +19,7 @@ GeomTrajectorySegments <- ggproto(
     } else {grob_arrows <- grid::grob()}
 
     # draw shadows ------
-    assert_that(is.list(shadow) || isFALSE(shadow), msg = "shadow should be a list created by shadow() or FALSE")
+    assert_that(is.list(shadow) || isFALSE(shadow), msg = "shadow should be a list created by shadow_defaults() or FALSE")
     if (is.list(shadow)) {
       grob_path_shadow <- original_draw_panel(
         data = data %>% mutate(colour = shadow$color, size = size + shadow$size), panel_params = panel_params, coord = coord, arrow = NULL, lineend = data$lineend[[1]], linejoin = data$linejoin[[1]], ...)
@@ -58,7 +58,7 @@ GeomTrajectorySegments <- ggproto(
 #' @inheritParams ggplot2::geom_segment
 #' @param position_arrow Where to place the arrows within the segments. Typically these are functions created by [position_trajectory_arrows_middle()] or [position_trajectory_arrows_boundaries()].
 #' @param arrow_size The size of the arrow relative to the line size.
-#' @param shadow Shadow specification as created by [shadow()]
+#' @param shadow Shadow specification as created by [shadow_defaults()]
 #' @param data A function created by [construct_get_segment_info()].
 #'
 #' @export
@@ -67,7 +67,7 @@ geom_trajectory_segments <- function(
   position_arrow = position_trajectory_arrows_middle(),
   arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type = "closed"),
   arrow_size = 1,
-  shadow = if("colour" %in% names(mapping)) {dynplot::shadow()} else {FALSE},
+  shadow = if("colour" %in% names(mapping)) shadow_defaults() else FALSE,
   ...,
   data = construct_get_segment_info(position_arrow),
   show.legend = NA
@@ -152,9 +152,6 @@ position_trajectory_arrows_boundaries <- function(quantile = 0.3) {
 
 
 #' @export
-shadow <- function(size = 1, color = "#222222") {
-  lst(
-    size,
-    color
-  )
+shadow_defaults <- function(size = 1, color = "#222222") {
+  lst(size, color)
 }
