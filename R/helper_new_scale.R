@@ -1,5 +1,4 @@
 #' @export
-
 new_scale <- ggnewscale::new_scale
 
 #' @export
