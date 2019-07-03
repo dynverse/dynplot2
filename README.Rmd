@@ -38,6 +38,8 @@ library(tidyverse)
 
 library(patchwork)
 
+set.seed(1)
+
 data(example_bifurcating)
 dataset <- example_bifurcating %>% add_root() %>% add_dimred(dimred = dyndimred::dimred_landmark_mds)
 ```

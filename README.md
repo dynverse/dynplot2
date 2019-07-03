@@ -138,6 +138,11 @@ changes.
 
 <!-- This section gets automatically generated from inst/NEWS.md, and also generates inst/NEWS -->
 
+### Recent changes in dynplot2 1.0.0 (unreleased)
+
+  - Spin-off from dynplot, dynplot2 provides a more modular interface to
+    visualize trajectories
+
 ### Recent changes in dynplot 1.0.0 (28-03-2019)
 
   - Initial release of dynplot
