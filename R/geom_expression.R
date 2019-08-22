@@ -1,7 +1,7 @@
-GeomExpressionRaster <- ggproto(
-  "GeomExpressionRaster",
-  GeomRaster,
-  default_aes = aesIntersect(GeomRaster$default_aes, aes(color = "grey80"))
+GeomExpressionTile <- ggproto(
+  "GeomExpressionTile",
+  GeomTile,
+  default_aes = aesIntersect(GeomTile$default_aes, aes(color = "grey80"))
 )
 
 #' Plotting expression
@@ -13,11 +13,12 @@ GeomExpressionRaster <- ggproto(
 #' @rdname geom_cell
 #'
 #' @export
-geom_expression_raster <- function(
+geom_expression_tile <- function(
   mapping = NULL,
   ...,
   show.legend = NA,
-  data = construct_get_expression_info()
+  rescale = dynutils::scale_quantile,
+  data = construct_get_expression_info(rescale = rescale)
 ) {
   assign("mapping", mapping, envir = environment(data)) # place the mapping in the data environment
 
@@ -26,7 +27,7 @@ geom_expression_raster <- function(
     data = data,
     mapping = mapping,
     stat = StatIdentity,
-    geom = GeomExpressionRaster,
+    geom = GeomExpressionTile,
     position = "identity",
     show.legend = show.legend,
     inherit.aes = FALSE,
@@ -37,12 +38,14 @@ geom_expression_raster <- function(
   )
 }
 
-construct_get_expression_info <- function() {
+construct_get_expression_info <- function(rescale) {
   function(data) {
     feature_info <- attr(data, "data")$feature_info
     cell_info <- attr(data, "data")$cell_info
 
     expression <- get_expression(attr(data, "data")$dataset)[cell_info$cell_id, feature_info$feature_id]
+
+    expression <- rescale(expression)
 
     expression_info <- reshape2::melt(as.matrix(expression), varnames = c("cell_id", "feature_id"), value.name = "expression") %>%
       mutate(cell_id = as.character(cell_id), feature_id = as.character(feature_id))
