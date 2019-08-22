@@ -3,7 +3,7 @@
 \name{geom_cell_point}
 \alias{geom_cell_point}
 \alias{geom_cell_hex}
-\alias{geom_expression_raster}
+\alias{geom_expression_tile}
 \title{Plotting cells}
 \usage{
 geom_cell_point(mapping = NULL, data = construct_get_cell_info(), ...,
@@ -11,8 +11,9 @@ geom_cell_point(mapping = NULL, data = construct_get_cell_info(), ...,
 
 geom_cell_hex()
 
-geom_expression_raster(mapping = NULL, ..., show.legend = NA,
-  data = construct_get_expression_info())
+geom_expression_tile(mapping = NULL, ..., show.legend = NA,
+  rescale = dynutils::scale_quantile,
+  data = construct_get_expression_info(rescale = rescale))
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by aes().}
