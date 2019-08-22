@@ -2,10 +2,11 @@
 
 ScaleExpressionFillColour <- ggproto(
   "ScaleExpressionFillColour",
-  scale_colour_distiller(type = "div", palette = "RdBu"),
+  scale_colour_distiller(type = "seq", palette = "OrRd", direction = 1),
   aesthetics = c("fill", "colour"),
-    oob = scales::squish
-  )
+  oob = scales::squish
+)
+
 
 #' @export
 scale_expression_fillcolour <- function(...){

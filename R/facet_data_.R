@@ -29,7 +29,7 @@ facet_grid_data <- function(...) {
       !!row_name := dots[[1]],
       ROW = seq_along(dots[[1]])
     )
-    rows <-  vars(!!as.name(row_name))
+    rows <-  vars(!!row_name := !!as.name(row_name))
   } else {
     row_name <- rows <- NULL
     row_data <- tibble(ROW = 1)
@@ -42,14 +42,15 @@ facet_grid_data <- function(...) {
       !!col_name := dots[[2]],
       COL = seq_along(dots[[2]])
     )
-    cols <-  vars(!!as.name(col_name))
+    cols <-  vars(!!col_name := !!as.name(col_name))
   } else {
     col_name <- cols <-NULL
     col_data <- tibble(COL = 1)
   }
 
   layout <- crossing(col_data, row_data) %>%
-    mutate(PANEL = row_number(), SCALE_X = 1, SCALE_Y = 1)
+    mutate(PANEL = row_number(), SCALE_X = 1, SCALE_Y = 1) %>%
+    as.data.frame() # convert to dataframe to avoid warnings when running unique(layout[names(params$cols)])
 
   # generate the labeller
   labeller <- function(x) {
@@ -167,6 +168,7 @@ facet_wrap_data <- function(..., nrow = NULL, ncol = 4, labeller = NULL) {
         data
       })
       result <- bind_rows(results)
+
       result
     }
   )

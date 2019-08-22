@@ -118,8 +118,7 @@ dynplot <- function(
 
 
   # plot --------------------------------------------------------------------
-  envir <- parent.frame()
-  p <- ggplot(data = cell_info, environment = envir) +
+  p <- ggplot(data = cell_info) +
     theme_graph()
   class(p) <- c("dynplot", class(p))
   p

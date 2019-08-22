@@ -2,17 +2,33 @@ library(dyntoy)
 library(tidyverse)
 library(dynwrap)
 
-dataset <- generate_dataset(model = "bifurcating", num_cells = 1000, add_prior_information = F, add_velocity = T, allow_tented_progressions = FALSE)
-dataset <- dataset %>% add_dimred(dimred = dyndimred::dimred_landmark_mds) %>% add_root()
+dataset <- generate_dataset(model = "bifurcating", num_cells = 10000, add_prior_information = F, add_velocity = T, allow_tented_progressions = FALSE)
+dataset <- dataset %>% add_dimred(dimred = dyndimred::dimred_landmark_mds)
+
+map(c("G1", "G2"), function(feature_id_oi) {
+  dynplot(dataset) +
+    geom_cell_point(aes(colour = select_feature_expression(feature_id_oi, d = .data))) +
+    scale_expression_fillcolour()
+})
+
+feature_ids <- c("G5", "G2", "G6", "G10")
+dynplot(dataset) +
+  geom_cell_point(aes(color = select_feature_expression(feature_id_oi, .data))) +
+  facet_wrap_data(feature_id_oi = feature_ids)
 
 dynplot(dataset) +
-  geom_cell_point(aes(colour = select_expression("G1"))) +
+  geom_cell_hex(aes(fill = select_feature_expression(feature_id_oi, .data)), bins = 100) +
+  facet_wrap_data(feature_id_oi = feature_ids) +
+  scale_expression_fillcolour()
+
+
+dynplot(dataset) +
+  geom_cell_point(aes(colour = select_feature_expression(feature_id_oi))) +
   scale_expression_fillcolour() + # a scale has to be given here, otherwise error
   new_scale_fillcolour() +
   geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
   geom_milestone_label(aes(fill = milestone_id)) +
   scale_milestones_fillcolour()
-
 
 dynplot(dataset) +
   geom_cell_point(color = "grey80") +
@@ -21,6 +37,15 @@ dynplot(dataset) +
   geom_milestone_label(aes(fill = milestone_id)) +
   scale_milestones_fillcolour() +
   geom_velocity_arrow(stat = stat_velocity_grid(grid_n = 20))
+
+
+dynplot(dataset) +
+  geom_cell_point(color = "grey80") +
+  new_scale_fillcolour() +
+  geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
+  geom_milestone_label(aes(fill = milestone_id)) +
+  scale_milestones_fillcolour() +
+  geom_velocity_arrow(stat = stat_velocity_cells())
 
 dynplot(dataset, layout = layout_graph(dataset)) +
   geom_trajectory_divergence() +
