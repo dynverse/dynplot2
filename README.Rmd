@@ -17,7 +17,7 @@ knitr::opts_chunk$set(fig.path = "man/figures/README_", warning=FALSE, message=F
 ## Installation
 
 ```r
-devtools::install_github("dynverse/dynplot")
+devtools::install_github("dynverse/dynplot2")
 ```
 
 On linux, udunits2 has to be installed:
