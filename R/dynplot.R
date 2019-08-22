@@ -103,7 +103,13 @@ dynplot <- function(
 
   # features ----------------------------------------------------------------
   if ("feature_positions" %in% names(layout)) {
-    data$feature_info <- layout$feature_positions
+    data$feature_info <- left_join(
+      layout$feature_positions,
+      dataset$feature_info,
+      "feature_id"
+    )
+  } else {
+    data$feature_info <- dataset$feature_info
   }
 
   # finalise ----------------------------------------------------------------
