@@ -7,7 +7,7 @@ GeomMilestoneLabel <- ggproto(
 #' Plotting milestones
 #'
 #' @param mapping Set of aesthetic mappings created by aes().
-#' @param data A function created by [get_cell_info_constructor()].
+#' @param data A function created by [construct_get_cell_info()].
 #' @param show.legend Whether to show a legend for this geom
 #'
 #' @rdname geom_milestone

@@ -47,7 +47,9 @@ construct_get_cell_info <- function() {
   function(data) {
     # first parse the mapping to know what to put inside the cell info
     walk(mapping, function(mapping_element) {
-      assign("data", data, envir = environment(mapping$colour))
+      envir <- new.env(parent = environment(mapping_element))
+      assign("data", data, envir = envir)
+      environment(mapping_element) <- envir
     })
 
     attr(data, "data")$cell_info

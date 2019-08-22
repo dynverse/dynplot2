@@ -4,11 +4,8 @@ ScaleExpressionFillColour <- ggproto(
   "ScaleExpressionFillColour",
   scale_colour_distiller(type = "div", palette = "RdBu"),
   aesthetics = c("fill", "colour"),
-  map = function(self, x, limits = self$get_limits()) {
-    self$super()$map(x, limits = limits)
-  },
-  oob = scales::squish
-)
+    oob = scales::squish
+  )
 
 #' @export
 scale_expression_fillcolour <- function(...){
@@ -18,3 +15,10 @@ scale_expression_fillcolour <- function(...){
     ...
   )
 }
+
+
+
+
+
+
+  scale_velocity_color <- function() {scale_color_distiller(palette = "RdBu", breaks = c(-1, 0, 1))}
