@@ -38,7 +38,7 @@ dynplot <- function(
     # add milestone percentages to cell info
     cell_info_milestone_percentages <- trajectory$milestone_percentages %>%
       mutate(milestone_id = factor(milestone_id, milestone_id_levels)) %>%
-      nest(-cell_id, .key = "milestone_percentages") %>%
+      nest(milestone_percentages = c(milestone_id, percentage)) %>%
       deframe()
     cell_info$milestone_percentages <- unname(cell_info_milestone_percentages[cell_info$cell_id])
 
@@ -84,7 +84,7 @@ dynplot <- function(
           milestone_id = factor(milestone_id, milestone_id_levels)
         ) %>%
         select(-cell_id) %>%
-        nest(-point_id, .key = "milestone_percentages") %>%
+        nest(milestone_percentages = c(milestone_id, percentage)) %>%
         deframe()
       segment_info$milestone_percentages <- segment_milestone_percentages[segment_info$point_id]
 
