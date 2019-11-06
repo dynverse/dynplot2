@@ -19,7 +19,8 @@
 #' @export
 dynplot <- function(
   dataset,
-  layout = layout_dimred(dataset)
+  trajectory,
+  layout
 ) {
   data <- list(dataset = dataset)
 
@@ -33,9 +34,9 @@ dynplot <- function(
     left_join(layout$cell_positions, "cell_id")
 
   # trajectory --------------------------------------------------------------
-  if (dynwrap::is_wrapper_with_trajectory(dataset)) {
+  if (dynwrap::is_wrapper_with_trajectory(trajectory)) {
     # add milestone percentages to cell info
-    cell_info_milestone_percentages <- dataset$milestone_percentages %>%
+    cell_info_milestone_percentages <- trajectory$milestone_percentages %>%
       mutate(milestone_id = factor(milestone_id, milestone_id_levels)) %>%
       nest(-cell_id, .key = "milestone_percentages") %>%
       deframe()
@@ -43,7 +44,7 @@ dynplot <- function(
 
     # milestone info
     milestone_info <- tibble(
-      milestone_id = dataset$milestone_ids
+      milestone_id = trajectory$milestone_ids
     ) %>%
       mutate(
         label = milestone_id
@@ -54,7 +55,7 @@ dynplot <- function(
     # milestone network
     edge_info <-
       bind_cols(
-        dataset$milestone_network
+        trajectory$milestone_network
       ) %>%
       mutate(edge_id = paste0(from, "->", to), label = edge_id) %>%
       left_join(layout$edge_positions, c("from", "to"))
@@ -73,9 +74,9 @@ dynplot <- function(
 
       # get milestone percentages of segments from progressions
       segment_milestone_percentages <- convert_progressions_to_milestone_percentages(
-        cell_ids = dataset$cell_ids,
-        milestone_ids = dataset$milestone_ids,
-        milestone_network = dataset$milestone_network,
+        cell_ids = trajectory$cell_ids,
+        milestone_ids = trajectory$milestone_ids,
+        milestone_network = trajectory$milestone_network,
         progressions = segment_info %>% mutate(cell_id = point_id)
       ) %>%
         mutate(

@@ -6,7 +6,7 @@
 #' @keywords plot_trajectory
 #'
 #' @export
-layout_dendro <- function(trajectory, diag_offset = 0.05) {
+dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05) {
   # root if necessary
   if ("root_milestone_id" %in% names(trajectory)) {
     root <- trajectory$root_milestone_id
@@ -139,7 +139,7 @@ layout_dendro <- function(trajectory, diag_offset = 0.05) {
   segment_progressions <- segments$segment_progressions
   segment_positions <- segments$segment_positions
 
-  lst(
+  layout <- lst(
     milestone_positions = milestone_positions %>% rename_dimred_xy(),
     edge_positions = edge_positions %>% rename_dimred_xy(),
     cell_positions = cell_positions %>% rename_dimred_xy(),
@@ -148,4 +148,9 @@ layout_dendro <- function(trajectory, diag_offset = 0.05) {
     connection_positions = connection_positions %>% rename_dimred_xy()
   )
 
+  dynplot(
+    dataset = dataset,
+    trajectory = trajectory,
+    layout = layout
+  )
 }

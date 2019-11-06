@@ -45,8 +45,8 @@ dataset <- example_bifurcating %>% add_root() %>% add_dimred(dimred = dyndimred:
 ```
 
 ```{r}
-dynplot(dataset) +
-  geom_cell_point(aes(colour = select_expression("G1"))) +
+dynplot_dimred(dataset) +
+  geom_cell_point(aes(colour = select_feature_expression("G1", d = .data))) +
   scale_expression_fillcolour() + # a scale has to be given here, otherwise error
   new_scale_fillcolour() +
   geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
@@ -55,7 +55,7 @@ dynplot(dataset) +
 ```
 
 ```{r}
-dynplot(dataset) +
+dynplot_dimred(dataset) +
   geom_cell_point(color = "grey80") +
   new_scale_fillcolour() +
   geom_trajectory_segments(aes(colour = milestone_percentages), size = 2) +
@@ -65,7 +65,7 @@ dynplot(dataset) +
 ```
 
 ```{r}
-dynplot(dataset, layout = layout_graph(dataset)) +
+dynplot_graph(dataset) +
   geom_trajectory_divergence() +
   geom_trajectory_segments(size = 3, color = "#333333") +
   new_scale_fillcolour() +
@@ -75,12 +75,12 @@ dynplot(dataset, layout = layout_graph(dataset)) +
 ```
 
 ```{r}
-dynplot(dataset, layout = layout_onedim(dataset, equal_cell_width = TRUE, margin = 0.05)) +
+dynplot_onedim(dataset, equal_cell_width = TRUE, margin = 0.05) +
   geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
   geom_trajectory_connection() +
   scale_milestones_fillcolour() +
   new_scale_fillcolour() +
-  geom_cell_point(aes(colour = select_expression("G2"))) +
+  geom_cell_point(aes(colour = select_feature_expression("G2", d = .data))) +
   scale_expression_fillcolour() +
   new_scale_fillcolour() +
   # geom_cell_point(aes(colour = milestone_percentages)) +
@@ -89,12 +89,12 @@ dynplot(dataset, layout = layout_onedim(dataset, equal_cell_width = TRUE, margin
 ```
 
 ```{r}
-dynplot(dataset, layout = layout_dendro(dataset)) +
+dynplot_dendro(dataset) +
   geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
   geom_trajectory_connection() +
   scale_milestones_fillcolour() +
   new_scale_fillcolour() +
-  geom_cell_point(aes(colour = select_expression("G1"))) +
+  geom_cell_point(aes(colour = select_feature_expression("G1", d = .data))) +
   scale_expression_fillcolour() +
   new_scale_fillcolour() +
   # geom_cell_point(aes(colour = milestone_percentages)) +
@@ -103,12 +103,12 @@ dynplot(dataset, layout = layout_dendro(dataset)) +
 ```
 
 ```{r}
-dynplot(dataset, layout = layout_dendro(dataset)) +
+dynplot_dendro(dataset) +
   geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
   geom_trajectory_connection() +
   scale_milestones_fillcolour() +
   new_scale_fillcolour() +
-  geom_cell_point(aes(y = y + dynutils::scale_minmax(select_expression("G2")) * 0.5 - 0.25, colour = select_expression("G2"))) +
+  geom_cell_point(aes(y = y + dynutils::scale_minmax(select_feature_expression("G2", d=.data)) * 0.5 - 0.25, colour = select_feature_expression("G2", d = .data))) +
   scale_expression_fillcolour() +
   new_scale_fillcolour() +
   # geom_cell_point(aes(colour = milestone_percentages)) +
@@ -118,21 +118,21 @@ dynplot(dataset, layout = layout_dendro(dataset)) +
 
 
 ```{r}
-cell_layout <- layout_onedim(dataset)
-feature_modules <- get_features(dataset)
-feature_layout <- layout_modules(dataset, feature_modules = feature_modules, cell_layout = cell_layout)
-layout <- layout_heatmap(dataset, feature_layout = feature_layout)
-
-dynplot(dataset, layout = layout) +
-  geom_trajectory_segments(aes(color = milestone_percentages)) +
-  geom_trajectory_connection() +
-  geom_milestone_label(aes(fill = milestone_id, hjust = as.integer(type == "end"))) +
-  scale_milestones_fillcolour() +
-  new_scale_fillcolour() +
-  geom_expression_raster() +
-  scale_expression_fillcolour() +
-  new_scale_fillcolour() +
-  geom_tile(aes(x = x, y = 1))
+# cell_layout <- layout_onedim(dataset)
+# feature_modules <- get_features(dataset)
+# feature_layout <- layout_modules(dataset, feature_modules = feature_modules, cell_layout = cell_layout)
+# layout <- layout_heatmap(dataset, feature_layout = feature_layout)
+# 
+# dynplot(dataset, layout = layout) +
+#   geom_trajectory_segments(aes(color = milestone_percentages)) +
+#   geom_trajectory_connection() +
+#   geom_milestone_label(aes(fill = milestone_id, hjust = as.integer(type == "end"))) +
+#   scale_milestones_fillcolour() +
+#   new_scale_fillcolour() +
+#   geom_expression_raster() +
+#   scale_expression_fillcolour() +
+#   new_scale_fillcolour() +
+#   geom_tile(aes(x = x, y = 1))
 ```
 
 ## Latest changes

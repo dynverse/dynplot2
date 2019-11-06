@@ -2,24 +2,53 @@ library(dyntoy)
 library(tidyverse)
 library(dynwrap)
 
-dataset <- generate_dataset(model = "bifurcating", num_cells = 10000, add_prior_information = F, add_velocity = T, allow_tented_progressions = FALSE)
+dataset <- generate_dataset(model = "linear", num_cells = 1000, add_prior_information = F, add_velocity = T, allow_tented_progressions = FALSE) %>% dyntoy::add_velocity(velocity_rescale = 1)
 dataset <- dataset %>% add_dimred(dimred = dyndimred::dimred_landmark_mds)
 
-map(c("G1", "G2"), function(feature_id_oi) {
+feature_ids <- c("G1", "G2", "G3", "G4")
+
+patchwork::wrap_plots(
   dynplot(dataset) +
-    geom_cell_point(aes(colour = select_feature_expression(feature_id_oi, d = .data))) +
-    scale_expression_fillcolour()
-})
+    geom_cell_point(aes(color = select_feature_expression("G1", .data))) +
+    scale_expression_fillcolour() +
+    geom_trajectory_segments(),
+  dynplot(dataset) +
+    geom_cell_point(aes(color = select_feature_expression("G1", .data, expression_source = "expression_projected"))) +
+    scale_expression_fillcolour() +
+    geom_trajectory_segments(),
+  dynplot(dataset) +
+    geom_cell_point(aes(color = select_feature_velocity("G1", .data))) +
+    scale_velocity_fillcolor() +
+    geom_trajectory_segments()
+)
 
-feature_ids <- c("G5", "G2", "G6", "G10")
 dynplot(dataset) +
-  geom_cell_point(aes(color = select_feature_expression(feature_id_oi, .data))) +
-  facet_wrap_data(feature_id_oi = feature_ids)
+  geom_cell_point(aes(), color = "green") +
+  geom_cell_point(aes(x = x_projected, y = y_projected), color = "red")
 
 dynplot(dataset) +
-  geom_cell_hex(aes(fill = select_feature_expression(feature_id_oi, .data)), bins = 100) +
-  facet_wrap_data(feature_id_oi = feature_ids) +
-  scale_expression_fillcolour()
+  geom_cell_point(aes(color = select_feature_velocity(feature_id_oi)), color = "grey") +
+  geom_trajectory_segments()
+
+patchwork::wrap_plots(
+  dynplot(dataset) +
+    geom_cell_point(aes(), color = "grey") +
+    geom_velocity_arrow() +
+    geom_trajectory_segments(),
+  patchwork::wrap_plots(
+    dynplot(dataset) +
+      geom_cell_point(aes(color = select_feature_velocity(feature_id_oi, .data))) +
+      facet_wrap_data(feature_id_oi = feature_ids) +
+      scale_velocity_fillcolor(),
+    dynplot(dataset) +
+      geom_cell_point(aes(color = select_feature_expression(feature_id_oi, .data))) +
+      facet_wrap_data(feature_id_oi = feature_ids) +
+      scale_expression_fillcolour(),
+    ncol = 1
+  ),
+  nrow = 1
+)
+
 
 
 dynplot(dataset) +

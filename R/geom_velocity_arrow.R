@@ -79,15 +79,21 @@ embed_arrows_cells <- function(cell_positions) {
     )
 }
 
+#' @param cell_positions Dataframe contains at least x, y, x_projected and y_projected
+embed_arrows_random <- function(cell_positions, n_cells = 100) {
+  embed_arrows_cells(cell_positions) %>%
+    sample_n(min(nrow(cell_positions), n_cells))
+}
+
 
 
 #' @param cell_positions The dimensionality reduction which contains at least x, y, x_projected and y_projected
 #' @param grid_n Number of rows and columns in the grid
-#' @param grid_sd Standard deviation for smoothing arrows
+#' @param grid_bandwidth Bandwidth relative to the spacing of the grid
 embed_arrows_grid <- function(
   cell_positions,
   grid_n = c(15, 15),
-  grid_sd = NULL,
+  grid_bandwidth = 1/3,
   max_arrow_length = NULL,
   filter = rlang::quo(mass > max(mass) * 0.1)
 ) {
@@ -104,17 +110,15 @@ embed_arrows_grid <- function(
   grid_h <- grid_n[2]
 
   # calculate grid points
-  range_x <- range(unlist(cell_positions[, c("x", "x_projected")]))
-  range_y <- range(unlist(cell_positions[, c("y", "y_projected")]))
+  range_x <- range(unlist(cell_positions[, c("x", "x_projected")]), na.rm = TRUE)
+  range_y <- range(unlist(cell_positions[, c("y", "y_projected")]), na.rm = TRUE)
   grid_x <- seq(range_x[1],range_x[2],length.out=grid_w)
   grid_y <- seq(range_y[1],range_y[2],length.out=grid_h)
 
   diff_x <- grid_x[2] - grid_x[1]
   diff_y <- grid_y[2] - grid_y[1]
 
-  if(is.null(grid_sd)) {
-    grid_sd <- sqrt((diff_x)^2 + (diff_y)^2)/3
-  }
+  grid_sd <- sqrt((diff_x)^2 + (diff_y)^2) * grid_bandwidth
   if(is.null(max_arrow_length)) {
     max_arrow_length <- min(c(diff_x, diff_y))
   }
@@ -128,7 +132,9 @@ embed_arrows_grid <- function(
   garrows <- map_dfr(grid_x, function(x) {
     # cell distances and weights to each grid point
     cd <- sqrt(outer(cell_positions$y,-grid_y,'+')^2 + (x-cell_positions$x)^2)
-    cw <- dnorm(cd,sd=grid_sd)
+    # cw <- dexp(cd, 100)
+    # cw <- dnorm(cd,sd=grid_sd)
+    cw <- cd < grid_sd
 
     # calculate the actual arrow
     gw <- Matrix::colSums(cw)
@@ -164,6 +170,7 @@ embed_arrows_grid <- function(
   garrows
 }
 
+
 #' @export
 stat_velocity_cells <- dynutils::inherit_default_params(
   list(embed_arrows_cells),
@@ -186,7 +193,7 @@ stat_velocity_grid <- dynutils::inherit_default_params(
         embed_arrows_grid(
           attr(data, "data")$cell_info,
           grid_n = grid_n,
-          grid_sd = grid_sd,
+          grid_bandwidth = grid_bandwidth,
           max_arrow_length = max_arrow_length,
           filter = filter
         )
@@ -198,17 +205,13 @@ formals(stat_velocity_grid) <- formals(embed_arrows_grid)[2:length(formals(embed
 
 #' @export
 stat_velocity_random <- dynutils::inherit_default_params(
-  list(embed_arrows_cells),
-  function(sample_n = 100, ...) {
+  list(embed_arrows_random),
+  function(...) {
     list(
       data = function(data) {
-        embedding <- embed_arrows_cells(
-          attr(data, "data")$cell_info
-        )
-        embedding %>%
-          sample_n(min(nrow(embedding), !!sample_n))
+        embed_arrows_random(attr(data, "data")$cell_info, n_cells = n_cells)
       }
     )
   }
 )
-formals(stat_velocity_random) <- formals(embed_arrows_cells)[2:length(formals(embed_arrows_cells))]
+formals(stat_velocity_random) <- formals(embed_arrows_random)[2:length(formals(embed_arrows_random))]

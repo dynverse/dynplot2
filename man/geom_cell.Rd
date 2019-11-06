@@ -9,7 +9,8 @@
 geom_cell_point(mapping = NULL, data = construct_get_cell_info(), ...,
   show.legend = NA)
 
-geom_cell_hex()
+geom_cell_hex(mapping = NULL, data = construct_get_cell_info(),
+  bins = 100, ..., show.legend = NA)
 
 geom_expression_tile(mapping = NULL, ..., show.legend = NA,
   rescale = dynutils::scale_quantile,

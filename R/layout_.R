@@ -4,6 +4,7 @@ rename_dimred_xy <- function(df) {
   df
 }
 
+# partitions edges into smaller segments
 calculate_segments_from_edges <- function(edge_positions, n_segments_per_edge = 100) {
   n_segments_per_edge <- 100
   segments <- pmap(edge_positions, function(from, to, comp_1_from, comp_2_from, comp_1_to, comp_2_to, ...) {
@@ -32,17 +33,27 @@ calculate_segments_from_edges <- function(edge_positions, n_segments_per_edge = 
 
 #' @export
 #' @keywords layout
-layout_dimred <- function(dataset) {
+dynplot_dimred <- function(dataset, trajectory = dataset, dimred = dataset$dimred) {
   layout <- list()
 
-  if (!dynwrap::is_wrapper_with_dimred(dataset)) {
-    message("Trajectory does not have a dimensionality reduction, adding it")
+  if (is.null(dimred)) {
+    message("No dimred specified, calculating it")
     dimred <- dyndimred::dimred_landmark_mds(dynwrap::get_expression(dataset), ndim = 2, distance_method = "spearman")
-    dataset <- dataset %>% dynwrap::add_dimred(dimred)
   }
 
-  # cell positions
-  dimred <- dataset$dimred
+  # if the dimred originated from the trajectory AND this trajectory already contains a trajectory dimred, we don't calculate the projection. In all other cases we do
+  trajectory_dimred <- trajectory$dimred # store this in a variable for pryr::address
+
+  recalculate_traj_dimred <- !(
+    dynwrap::is_wrapper_with_dimred(trajectory)
+    &&
+    !is.null(trajectory_dimred)
+    &&
+    identical(trajectory_dimred[1, ], dimred[1, ], )
+    &&
+    !all(c("dimred_edge_positions", "dimred_segment_positions", "dimred_segment_progressions") %in% names(trajectory))
+  )
+
   if (!is.null(dataset$dimred_projected)) {
     dimred <- cbind(
       dimred,
@@ -58,26 +69,39 @@ layout_dimred <- function(dataset) {
   layout$cell_positions <- cell_positions
 
   # trajectory --------------------------------------------------------------
-  if (dynwrap::is_wrapper_with_trajectory(dataset)) {
+  if (dynwrap::is_wrapper_with_trajectory(trajectory)) {
+
+    # trajectory dimred
+    if (!recalculate_traj_dimred) {
+      traj_dimred <- trajectory
+    } else {
+      print("projecting dimred")
+      traj_dimred <- trajectory %>% dynwrap::project_trajectory(dimred)
+    }
+
     # milestone positions
-    milestone_positions <- as.data.frame(dataset$dimred_milestones[dataset$milestone_ids, , drop = FALSE]) %>%
+    milestone_positions <- as.data.frame(traj_dimred$dimred_milestones[trajectory$milestone_ids, , drop = FALSE]) %>%
       rename_dimred_xy() %>%
       as.data.frame() %>%
       rownames_to_column("milestone_id")
 
+      edge_positions <- trajectory$edge_positions
+      segment_positions <- trajectory$edge_positions
+      segment_progressions <- trajectory$edge_positions
+
     # trajectory edge positions
-    edge_positions <- dataset$milestone_network %>%
+    edge_positions <- trajectory$milestone_network %>%
       select(from, to) %>%
       left_join(milestone_positions %>% rename_all(~paste0(., "_from")), c("from" = "milestone_id_from")) %>%
       left_join(milestone_positions %>% rename_all(~paste0(., "_to")), c("to" = "milestone_id_to"))
 
     # trajectory segment positions
-    segment_positions <- dataset$dimred_segment_points %>%
+    segment_positions <- traj_dimred$dimred_segment_points %>%
       rename_dimred_xy() %>%
       as.data.frame() %>%
       rownames_to_column("point_id")
 
-    segment_progressions <- dataset$dimred_segment_progressions %>%
+    segment_progressions <- traj_dimred$dimred_segment_progressions %>%
       mutate(point_id = segment_positions$point_id)
 
     # add to layout
@@ -89,13 +113,17 @@ layout_dimred <- function(dataset) {
     ))
   }
 
-  layout
+  dynplot(
+    dataset = dataset,
+    trajectory = trajectory,
+    layout = layout
+  )
 }
 
 
 #' @export
 #' @keywords layout
-layout_graph <- function(dataset) {
+dynplot_graph <- function(dataset, trajectory = dataset) {
   assert_that(dynwrap::is_wrapper_with_trajectory(dataset))
   trajectory_dimred <- dynwrap::calculate_trajectory_dimred(dataset)
 
@@ -114,12 +142,16 @@ layout_graph <- function(dataset) {
     divergence_polygon_positions = trajectory_dimred$divergence_polygon_positions %>% rename_dimred_xy()
   )
 
-  layout
+  dynplot(
+    dataset = dataset,
+    trajectory = trajectory,
+    layout = layout
+  )
 }
 
 #' @export
 #' @keywords layout
-layout_onedim <- function(dataset, margin = 0.02, equal_cell_width = TRUE) {
+dynplot_onedim <- function(dataset, trajectory = dataset, margin = 0.02, equal_cell_width = TRUE) {
   assert_that(dynwrap::is_wrapper_with_trajectory(dataset))
 
   # reorder
@@ -149,5 +181,9 @@ layout_onedim <- function(dataset, margin = 0.02, equal_cell_width = TRUE) {
     connection_positions
   )
 
-  layout
+  dynplot(
+    dataset = dataset,
+    trajectory = trajectory,
+    layout = layout
+  )
 }

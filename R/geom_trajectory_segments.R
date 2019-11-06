@@ -81,7 +81,7 @@ geom_trajectory_segments <- function(
     position = "identity",
     show.legend = show.legend,
     inherit.aes = FALSE,
-    params = lst(arrow, arrow_size, shadow = shadow, ...)
+    params = lst(arrow, arrow_size, shadow, ...)
   )
 }
 
@@ -93,6 +93,10 @@ get_edge_info <- function(data) {
 }
 construct_get_segment_info <- function(position_arrow = position_trajectory_arrows_middle()) {
   function(data) {
+    if (is.null(attr(data, "data")$segment_info)) {
+      stop("No segment information in the data, did you add a trajectory?")
+    }
+
     segment_info <- attr(data, "data")$segment_info
     segment_info <- segment_info %>% position_arrow()
 

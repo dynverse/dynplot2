@@ -6,7 +6,7 @@
 \alias{dynplot-package}
 \title{Create a dynplot with a specified layout}
 \usage{
-dynplot(dataset, layout = layout_dimred(dataset))
+dynplot(dataset, trajectory, layout)
 }
 \arguments{
 \item{dataset}{A dynwrap dataset object, typically containing a trajectory}

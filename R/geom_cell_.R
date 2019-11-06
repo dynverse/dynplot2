@@ -54,11 +54,9 @@ StatCellHex <- ggproto(
     bins = 30,
     na.rm = FALSE
   ) {
-    print(bins)
-
     ggplot2:::try_require("hexbin", "stat_binhex")
 
-    # parts of this code were taken from ggplot2 stat-binhex
+    # parts of this code were taken from ggplot2 stat_binhex
 
     binwidth <- binwidth %||% ggplot2:::hex_binwidth(bins, scales)
 
@@ -75,13 +73,28 @@ StatCellHex <- ggproto(
 
     out_coords <- bind_cols(hexbin::hcell2xy(hb)) %>%
       mutate(hexagon_id = hb@cell)
+
+    # get count and density
+    out_count <- data %>%
+      mutate(hexagon_id = hb@cID) %>%
+      group_by(hexagon_id) %>%
+      summarise(
+        count = n()
+      ) %>%
+      mutate(
+        density = count / max(count)
+      )
+
+    # summarise all numeric variables to mean
     out_data <- data %>%
       select(-x, -y, -group, -PANEL) %>%
       mutate(hexagon_id = hb@cID) %>%
       group_by(hexagon_id) %>%
-      summarise_all(mean)
+      summarise_if(is.numeric, mean)
 
-    out <- left_join(out_coords, out_data, "hexagon_id")
+    out <- left_join(out_coords, out_data, "hexagon_id") %>%
+      left_join(out_count, "hexagon_id")
+
     out
   }
 )
@@ -92,7 +105,7 @@ StatCellHex <- ggproto(
 geom_cell_hex <- function(
   mapping = NULL,
   data = construct_get_cell_info(),
-  bins = 30,
+  bins = 100,
   ...,
   show.legend = NA
 ) {
@@ -119,7 +132,7 @@ construct_get_cell_info <- function() {
     # first parse the mapping to know what to put inside the cell info
     out <- attr(data, "data")$cell_info
 
-    # create a data_env and put it in the d column, this can be used by select_* functions
+    # create expression, counts and expression_projected
     data_env <- new.env(parent = emptyenv())
     assign("data", data, data_env)
 
