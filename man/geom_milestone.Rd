@@ -4,8 +4,12 @@
 \alias{geom_milestone_label}
 \title{Plotting milestones}
 \usage{
-geom_milestone_label(mapping = NULL, data = get_milestone_info, ...,
-  show.legend = TRUE)
+geom_milestone_label(
+  mapping = NULL,
+  data = get_milestone_info,
+  ...,
+  show.legend = TRUE
+)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by aes().}

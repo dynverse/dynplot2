@@ -1,6 +1,7 @@
 #' Create a dynplot with a specified layout
 #'
 #' @param dataset A dynwrap dataset object, typically containing a trajectory
+#' @param trajectory The trajectory dynwrap object, if available
 #' @param layout A `layout_*` function from dynplot, such as [layout_dimred()] or [layout_graph()]
 #'
 #' @return A ggplot2 object, with the processed data in `plot$data` and `attr(plot$data, "data")`
@@ -32,6 +33,15 @@ dynplot <- function(
       dataset$cell_info %||% tibble(cell_id = dataset$cell_ids)
     ) %>%
     left_join(layout$cell_positions, "cell_id")
+
+  # add trajectory cell info
+  if (!is.null(trajectory$cell_info)) {
+    cell_info <- left_join(
+      cell_info,
+      trajectory$cell_info[c("cell_id", setdiff(colnames(trajectory$cell_info), colnames(cell_info)))],
+      "cell_id"
+    )
+  }
 
   # trajectory --------------------------------------------------------------
   if (dynwrap::is_wrapper_with_trajectory(trajectory)) {

@@ -4,9 +4,13 @@
 \alias{linearise_trajectory}
 \title{Linearise a trajectory}
 \usage{
-linearise_trajectory(trajectory, margin = 0.05,
-  no_margin_between_linear = TRUE, one_edge = TRUE,
-  equal_cell_width = FALSE)
+linearise_trajectory(
+  trajectory,
+  margin = 0.05,
+  no_margin_between_linear = TRUE,
+  one_edge = TRUE,
+  equal_cell_width = FALSE
+)
 }
 \arguments{
 \item{trajectory}{The trajectory}

@@ -4,8 +4,12 @@
 \alias{geom_feature_text}
 \title{Plotting feature text}
 \usage{
-geom_feature_text(mapping = NULL, data = construct_get_feature_info(),
-  ..., show.legend = TRUE)
+geom_feature_text(
+  mapping = NULL,
+  data = construct_get_feature_info(),
+  ...,
+  show.legend = TRUE
+)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by aes().}

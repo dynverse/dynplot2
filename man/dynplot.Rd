@@ -3,7 +3,6 @@
 \docType{package}
 \name{dynplot}
 \alias{dynplot}
-\alias{dynplot-package}
 \title{Create a dynplot with a specified layout}
 \usage{
 dynplot(dataset, trajectory, layout)
@@ -11,7 +10,9 @@ dynplot(dataset, trajectory, layout)
 \arguments{
 \item{dataset}{A dynwrap dataset object, typically containing a trajectory}
 
-\item{layout}{A \code{layout_*} function from dynplot, such as \code{\link[=layout_dimred]{layout_dimred()}} or \code{\link[=layout_graph]{layout_graph()}}}
+\item{trajectory}{The trajectory dynwrap object, if available}
+
+\item{layout}{A \verb{layout_*} function from dynplot, such as \code{\link[=layout_dimred]{layout_dimred()}} or \code{\link[=layout_graph]{layout_graph()}}}
 }
 \value{
 A ggplot2 object, with the processed data in \code{plot$data} and \code{attr(plot$data, "data")}

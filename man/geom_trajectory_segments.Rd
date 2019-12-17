@@ -4,16 +4,20 @@
 \alias{geom_trajectory_segments}
 \title{Plotting individual segments of the trajectory}
 \usage{
-geom_trajectory_segments(mapping = NULL,
+geom_trajectory_segments(
+  mapping = NULL,
   position_arrow = position_trajectory_arrows_middle(),
-  arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type =
-  "closed"), arrow_size = 1, shadow = if ("colour" \%in\%
-  names(mapping)) shadow_defaults() else FALSE, ...,
-  data = construct_get_segment_info(position_arrow), show.legend = NA)
+  arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type = "closed"),
+  arrow_size = 1,
+  shadow = if ("colour" \%in\% names(mapping)) shadow_defaults() else FALSE,
+  ...,
+  data = construct_get_segment_info(position_arrow),
+  show.legend = NA
+)
 }
 \arguments{
-\item{mapping}{Set of aesthetic mappings created by \code{\link[=aes]{aes()}} or
-\code{\link[=aes_]{aes_()}}. If specified and \code{inherit.aes = TRUE} (the
+\item{mapping}{Set of aesthetic mappings created by \code{\link[ggplot2:aes]{aes()}} or
+\code{\link[ggplot2:aes_]{aes_()}}. If specified and \code{inherit.aes = TRUE} (the
 default), it is combined with the default mapping at the top level of the
 plot. You must supply \code{mapping} if there is no plot mapping.}
 
@@ -25,7 +29,7 @@ plot. You must supply \code{mapping} if there is no plot mapping.}
 
 \item{shadow}{Shadow specification as created by \code{\link[=shadow_defaults]{shadow_defaults()}}}
 
-\item{...}{Other arguments passed on to \code{\link[=layer]{layer()}}. These are
+\item{...}{Other arguments passed on to \code{\link[ggplot2:layer]{layer()}}. These are
 often aesthetics, used to set an aesthetic to a fixed value, like
 \code{colour = "red"} or \code{size = 3}. They may also be parameters
 to the paired geom/stat.}
