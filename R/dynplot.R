@@ -26,8 +26,6 @@ dynplot <- function(
   data <- list(dataset = dataset)
 
   # cell info ---------------------------------------------------------------
-  milestone_id_levels <- dataset$milestone_ids
-
   cell_info <-
     bind_cols(
       dataset$cell_info %||% tibble(cell_id = dataset$cell_ids)
@@ -43,8 +41,19 @@ dynplot <- function(
     )
   }
 
+  # grouping ----------------------------------------------------------------
+  if ("grouping" %in% names(dataset)) {
+    cell_info <- left_join(
+      cell_info,
+      dataset$grouping %>% enframe("cell_id", "group_id"),
+      "cell_id"
+    )
+  }
+
   # trajectory --------------------------------------------------------------
   if (dynwrap::is_wrapper_with_trajectory(trajectory)) {
+    milestone_id_levels <- trajectory$milestone_ids
+
     # add milestone percentages to cell info
     cell_info_milestone_percentages <- trajectory$milestone_percentages %>%
       mutate(milestone_id = factor(milestone_id, milestone_id_levels)) %>%
@@ -57,7 +66,8 @@ dynplot <- function(
       milestone_id = trajectory$milestone_ids
     ) %>%
       mutate(
-        label = milestone_id
+        labelling = trajectory$milestone_labelling[milestone_id] %||% NA_character_,
+        label = case_when(is.na(labelling) ~ milestone_id, TRUE ~ labelling)
       ) %>%
       left_join(layout$milestone_positions, "milestone_id") %>%
       mutate(milestone_id = factor(milestone_id, milestone_id_levels))
@@ -122,6 +132,7 @@ dynplot <- function(
   } else {
     data$feature_info <- dataset$feature_info
   }
+
 
   # finalise ----------------------------------------------------------------
   data$cell_info <- cell_info

@@ -69,7 +69,7 @@ geom_velocity_stream <- function(
 }
 
 
-#' @param cell_positions The dimensionality reduction which contains at least x, y, x_projected and y_projected
+#' @param cell_positions The dimensionality reduction which contains at least x, y, x_future and y_future
 #' @param grid_n Number of rows and columns in the grid
 #' @param grid_sd Standard deviation for smoothing arrows
 embed_arrows_stream <- function(
@@ -93,10 +93,10 @@ embed_arrows_stream <- function(
 
   streamplot <- matplotlib$axes$mstream$streamplot(
     ax,
-    np_array(unique(grid_arrows$x)),
-    np_array(unique(grid_arrows$y)),
-    np_array(matrix(grid_arrows$x_difference, nrow = length(unique(grid_arrows$x)), byrow = F)),
-    np_array(matrix(grid_arrows$y_difference, nrow = length(unique(grid_arrows$x)), byrow = F))
+    reticulate::np_array(unique(grid_arrows$x)),
+    reticulate::np_array(unique(grid_arrows$y)),
+    reticulate::np_array(matrix(grid_arrows$x_difference, nrow = length(unique(grid_arrows$x)), byrow = F)),
+    reticulate::np_array(matrix(grid_arrows$y_difference, nrow = length(unique(grid_arrows$x)), byrow = F))
   )
   vertices <- streamplot$lines$get_segments()
 
@@ -104,14 +104,14 @@ embed_arrows_stream <- function(
     tibble(
       x = matrix[1],
       y = matrix[3],
-      x_projected = matrix[2],
-      y_projected = matrix[4]
+      x_future = matrix[2],
+      y_future = matrix[4]
     )
   })
 
   # group into lines and remove duplicate coordinates
   streamplot_data <- streamplot_data %>%
-    mutate(diff = (lead(x) - x_projected) + (lead(y) - y_projected)) %>%
+    mutate(diff = (lead(x) - x_future) + (lead(y) - y_future)) %>%
     mutate(line = lag(cumsum(diff != 0), default = 0)) %>%
     group_by(x, y) %>% # remove duplicate x and y coordinates
     slice(1) %>%

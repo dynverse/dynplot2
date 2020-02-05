@@ -48,7 +48,7 @@ select_feature_velocity <- function(feature_id, d) {
   assert_that(!missing(d) && class(d) == "rlang_data_pronoun", msg = str_glue("The second argument of select_feature_velocity should be {crayon::italic('.data')} or {crayon::italic('d = .data')}"))
 
   feature_expression <- select_feature_expression(feature_id, d, "expression")
-  feature_expression_projected <- select_feature_expression(feature_id, d, "expression_projected")
+  feature_expression_future <- select_feature_expression(feature_id, d, "expression_future")
 
-  feature_expression_projected - feature_expression
+  feature_expression_future - feature_expression
 }

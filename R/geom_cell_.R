@@ -132,7 +132,7 @@ construct_get_cell_info <- function() {
     # first parse the mapping to know what to put inside the cell info
     out <- attr(data, "data")$cell_info
 
-    # create expression, counts and expression_projected
+    # create expression, counts and expression_future
     data_env <- new.env(parent = emptyenv())
     assign("data", data, data_env)
 

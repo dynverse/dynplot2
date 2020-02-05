@@ -54,10 +54,17 @@ dynplot_dimred <- function(dataset, trajectory = dataset, dimred = dataset$dimre
     !all(c("dimred_edge_positions", "dimred_segment_positions", "dimred_segment_progressions") %in% names(trajectory))
   )
 
-  if (!is.null(dataset$dimred_projected)) {
+  if (!is.null(dataset$dimred_future)) {
+    # check whether the dimred_future has to be recalculated, based on the dimred_digest attribute
+    if(!is.null(attr(dataset$dimred_future, "dimred_digest")) && attr(dataset$dimred_future, "dimred_digest") == digest::digest(dimred, "md5")) {
+      dimred_future <- dataset$dimred_future
+    } else {
+      message("Embedding velocity in dimensionality reduction")
+      dimred_future <- scvelo::embed_velocity(dataset, dimred)
+    }
     dimred <- cbind(
       dimred,
-      dataset$dimred_projected %>% {set_colnames(., paste0(colnames(.), "_projected"))}
+      dimred_future %>% {set_colnames(., paste0(colnames(.), "_future"))}
     )
   }
   cell_positions <- dimred %>%
@@ -75,7 +82,7 @@ dynplot_dimred <- function(dataset, trajectory = dataset, dimred = dataset$dimre
     if (!recalculate_traj_dimred) {
       traj_dimred <- trajectory
     } else {
-      print("projecting dimred")
+      message("Projecting trajectory onto dimensionality reduction")
       traj_dimred <- trajectory %>% dynwrap::project_trajectory(dimred)
     }
 

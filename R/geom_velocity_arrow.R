@@ -39,7 +39,7 @@ geom_velocity_arrow <- function(
   data = construct_get_velocity_info(stat),
   show.legend = NA
 ) {
-  mapping <- aesIntersect(mapping, aes_(x=~x, y=~y, xend=~x_projected, yend=~y_projected, length=~length))
+  mapping <- aesIntersect(mapping, aes_(x=~x, y=~y, xend=~x_future, yend=~y_future, length=~length))
   layer(
     data = data,
     mapping = mapping,
@@ -61,7 +61,7 @@ construct_get_velocity_info <- function(position) {
   get_velocity_info <- function(data) {
     cell_positions <- attr(data, "data")$cell_info
     assert_that(
-      c("x", "y", "x_projected", "y_projected") %all_in% colnames(cell_positions),
+      c("x", "y", "x_future", "y_future") %all_in% colnames(cell_positions),
       msg = "This layout does not contain information on velocity"
     )
 
@@ -71,15 +71,15 @@ construct_get_velocity_info <- function(position) {
 }
 
 
-#' @param cell_positions Dataframe contains at least x, y, x_projected and y_projected
+#' @param cell_positions Dataframe contains at least x, y, x_future and y_future
 embed_arrows_cells <- function(cell_positions) {
   cell_positions %>%
     mutate(
-      length = sqrt((y_projected - y)**2 + (x_projected - x)**2),
+      length = sqrt((y_future - y)**2 + (x_future - x)**2),
     )
 }
 
-#' @param cell_positions Dataframe contains at least x, y, x_projected and y_projected
+#' @param cell_positions Dataframe contains at least x, y, x_future and y_future
 embed_arrows_random <- function(cell_positions, n_cells = 100) {
   embed_arrows_cells(cell_positions) %>%
     sample_n(min(nrow(cell_positions), n_cells))
@@ -87,7 +87,7 @@ embed_arrows_random <- function(cell_positions, n_cells = 100) {
 
 
 
-#' @param cell_positions The dimensionality reduction which contains at least x, y, x_projected and y_projected
+#' @param cell_positions The dimensionality reduction which contains at least x, y, x_future and y_future
 #' @param grid_n Number of rows and columns in the grid
 #' @param grid_bandwidth Bandwidth relative to the spacing of the grid
 embed_arrows_grid <- function(
@@ -98,7 +98,7 @@ embed_arrows_grid <- function(
   filter = rlang::quo(mass > max(mass) * 0.1)
 ) {
   assert_that(is.data.frame(cell_positions))
-  assert_that(c("x", "y", "x_projected", "y_projected") %all_in% colnames(cell_positions))
+  assert_that(c("x", "y", "x_future", "y_future") %all_in% colnames(cell_positions))
 
   if (length(grid_n) == 1) {
     grid_n <- c(grid_n, grid_n)
@@ -110,8 +110,8 @@ embed_arrows_grid <- function(
   grid_h <- grid_n[2]
 
   # calculate grid points
-  range_x <- range(unlist(cell_positions[, c("x", "x_projected")]), na.rm = TRUE)
-  range_y <- range(unlist(cell_positions[, c("y", "y_projected")]), na.rm = TRUE)
+  range_x <- range(unlist(cell_positions[, c("x", "x_future")]), na.rm = TRUE)
+  range_y <- range(unlist(cell_positions[, c("y", "y_future")]), na.rm = TRUE)
   grid_x <- seq(range_x[1],range_x[2],length.out=grid_w)
   grid_y <- seq(range_y[1],range_y[2],length.out=grid_h)
 
@@ -124,8 +124,8 @@ embed_arrows_grid <- function(
   }
 
   cell_positions_difference <- tibble(
-    x = cell_positions$x_projected - cell_positions$x,
-    y = cell_positions$y_projected - cell_positions$y
+    x = cell_positions$x_future - cell_positions$x,
+    y = cell_positions$y_future - cell_positions$y
   )
 
   # calculate for each gaussian the smoothed arrow using a gaussian kernel
@@ -163,8 +163,8 @@ embed_arrows_grid <- function(
       length = length * norm,
       x_difference = x_difference * norm,
       y_difference = y_difference * norm,
-      x_projected = x + x_difference,
-      y_projected = y + y_difference,
+      x_future = x + x_difference,
+      y_future = y + y_difference,
     )
 
   garrows

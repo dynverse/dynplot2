@@ -1,7 +1,7 @@
 GeomMilestoneLabel <- ggproto(
   "GeomMilestoneLabel",
   GeomLabel,
-  default_aes = aesIntersect(aes(fill = "#111111CC", fontface = "bold"), GeomLabel$default_aes)
+  default_aes = aesIntersect(aes(color = "white", fill = "#111111CC", fontface = "bold"), GeomLabel$default_aes)
 )
 
 #' Plotting milestones
@@ -17,7 +17,7 @@ geom_milestone_label <- function(
   mapping = NULL,
   data = get_milestone_info,
   ...,
-  show.legend = TRUE
+  show.legend = FALSE
 ) {
   mapping <- aesIntersect(mapping, aes_(x=~x, y=~y, label=~label))
   layer(
