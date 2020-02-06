@@ -16,7 +16,7 @@ theme_clean <- function() {
 #' @keywords plot_helpers
 #'
 #' @export
-theme_graph <- function() {
+theme_dynplot <- function() {
   theme_void()
 }
 
@@ -27,5 +27,5 @@ theme_graph <- function() {
 #'
 #' @export
 empty_plot <- function() {
-  ggplot(tibble(x = character())) + geom_point(aes(x, x)) + theme_graph()
+  ggplot(tibble(x = character())) + geom_point(aes(x, x)) + theme_dynplot()
 }

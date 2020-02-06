@@ -142,7 +142,7 @@ dynplot <- function(
 
   # plot --------------------------------------------------------------------
   p <- ggplot(data = cell_info) +
-    theme_graph()
+    theme_dynplot()
   class(p) <- c("dynplot", class(p))
   p
 }

@@ -1,3 +1,4 @@
+#' Add a new scale
 #' @export
 #' @rdname new_scale
 new_scale <- ggnewscale::new_scale

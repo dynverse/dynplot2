@@ -21,6 +21,7 @@ ScaleExpressionColour <- ggproto(
 )
 
 
+#' Scale expression values
 #' @export
 #' @rdname scale_expression
 scale_expression_colour <- scale_expression_color <- function(name = "Expression", ...){
