@@ -90,7 +90,8 @@ dynplot <- function(
       segment_info <- layout$segment_progressions %>%
         mutate(edge_id = paste0(from, "->", to)) %>%
         arrange(edge_id, percentage) %>%
-        left_join(layout$segment_positions, "point_id")
+        left_join(layout$segment_positions, "point_id") %>%
+        left_join(trajectory$milestone_network %>% select(-length), c("from", "to"))
 
       # get milestone percentages of segments from progressions
       segment_milestone_percentages <- convert_progressions_to_milestone_percentages(

@@ -10,8 +10,6 @@ GeomTrajectorySegments <- ggproto(
 
     # draw arrows -------
     # select the rows at draw_arrow and draw_arrow - 1
-    browser()
-
     data_arrows <- filter(data, draw_arrow | lead(draw_arrow)) %>%
       mutate(group = ceiling(row_number() / 2))
 
@@ -135,7 +133,7 @@ position_trajectory_arrows_middle <- function() {
       calculate_trajectory_segment_length() %>%
       group_by(from, to) %>%
       mutate(
-        draw_arrow = (row_number() == which.min(abs(cumlength - last(cumlength)/2))) & row_number() > 1
+        draw_arrow = (row_number() == which.min(abs(cumlength - last(cumlength)/2))) & (row_number() > 1) & (directed)
       ) %>%
       ungroup()
   }
@@ -152,7 +150,7 @@ position_trajectory_arrows_boundaries <- function(quantile = 0.3) {
       mutate(
         draw_arrow_start = (row_number() == which.min(abs(cumlength - last(cumlength) * quantile))) & row_number() > 1,
         draw_arrow_end = (row_number() == which.min(abs(cumlength - last(cumlength) * (1-quantile)))) & row_number() > 1,
-        draw_arrow = draw_arrow_start | draw_arrow_end
+        draw_arrow = (draw_arrow_start | draw_arrow_end) & (row_number() > 1) & (directed)
       ) %>%
       ungroup()
   }
