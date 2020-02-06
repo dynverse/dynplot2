@@ -1,4 +1,4 @@
-#' Plot all the trajectories
+#' Plot all the trajectories, in a modular fashion
 #'
 #' @import dplyr
 #' @import tidyr
@@ -14,5 +14,5 @@
 #' @importFrom magrittr %<>% %$% set_rownames set_colnames
 #'
 #' @docType package
-#' @name dynplot
+#' @name dynplot2
 NULL

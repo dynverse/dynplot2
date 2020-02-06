@@ -4,11 +4,14 @@
 \alias{scale_milestones}
 \alias{scale_milestones_fill}
 \alias{scale_milestones_color}
+\alias{scale_milestones_colour}
 \title{Milestone scales}
 \usage{
 scale_milestones_fill(name = "Milestone", milestone_colors = NULL)
 
 scale_milestones_color(name = "Milestone", milestone_colors = NULL)
+
+scale_milestones_colour(name = "Milestone", milestone_colors = NULL)
 }
 \description{
 Milestone scales

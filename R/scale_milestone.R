@@ -27,6 +27,11 @@ ScaleMilestoneFillColour <- ggproto(
         set_names(milestone_ids) %>%
         col2rgb() %>%
         t()
+    } else if(length(milestone_ids) > 0 && is.character(self$milestone_colors)) {
+      # convert from color to rgb matrix
+      self$milestone_colors <- self$milestone_colors %>%
+        col2rgb() %>%
+        t()
     }
   },
   train = function(self, x) {
@@ -89,6 +94,10 @@ scale_milestones_fill <- function(name = "Milestone", milestone_colors = NULL) {
 scale_milestones_color <- function(name = "Milestone", milestone_colors = NULL) {
   ggproto(NULL, ScaleMilestoneColor, name = name, milestone_colors = milestone_colors)
 }
+
+#' @rdname scale_milestones
+#' @export
+scale_milestones_colour <- scale_milestones_color
 
 color_milestone_percentages <- function(milestone_percentages, milestone_colors) {
   assert_that(!is.null(milestone_colors))

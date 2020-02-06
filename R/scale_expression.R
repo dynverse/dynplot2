@@ -22,6 +22,7 @@ ScaleExpressionColour <- ggproto(
 
 
 #' @export
+#' @rdname scale_expression
 scale_expression_colour <- scale_expression_color <- function(name = "Expression", ...){
   ggproto(
     "ScaleExpressionColour",
@@ -30,6 +31,10 @@ scale_expression_colour <- scale_expression_color <- function(name = "Expression
     ...
   )
 }
+
+#' @export
+#' @rdname scale_expression
+scale_expression_color <- scale_expression_colour
 
 
 ScaleExpressionFill <- ggproto(
@@ -43,6 +48,7 @@ ScaleExpressionFill <- ggproto(
 
 
 #' @export
+#' @rdname scale_expression
 scale_expression_fill <- function(name = "Expression", ...){
   ggproto(
     "ScaleExpressionFil",
