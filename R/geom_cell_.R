@@ -85,12 +85,13 @@ StatCellHex <- ggproto(
         density = count / max(count)
       )
 
-    # summarise all numeric variables to mean
+    # summarise all numeric variables to first value
     out_data <- data %>%
       select(-x, -y, -group, -PANEL) %>%
       mutate(hexagon_id = hb@cID) %>%
       group_by(hexagon_id) %>%
-      summarise_if(is.numeric, mean)
+      slice(1) %>%
+      ungroup()
 
     out <- left_join(out_coords, out_data, "hexagon_id") %>%
       left_join(out_count, "hexagon_id")

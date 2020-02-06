@@ -22,7 +22,7 @@ ScaleMilestoneFillColour <- ggproto(
     }
 
     self$milestone_ids <- milestone_ids
-    if (length(milestone_ids) > 0) {
+    if (length(milestone_ids) > 0 && is.null(self$milestone_colors)) {
       self$milestone_colors <- milestone_palette(length(milestone_ids)) %>%
         set_names(milestone_ids) %>%
         col2rgb() %>%
@@ -47,6 +47,7 @@ ScaleMilestoneFillColour <- ggproto(
     }
 
     y <- map_chr(x, color_milestone_percentages, milestone_colors = self$milestone_colors)
+
     y
   },
   get_breaks = function(self) {
@@ -61,12 +62,37 @@ ScaleMilestoneFillColour <- ggproto(
   values = NULL
 )
 
+
+ScaleMilestoneFill <- ggproto(
+  "ScaleMilestoneFill",
+  ScaleMilestoneFillColour,
+  aesthetics = c("fill")
+)
+
+ScaleMilestoneColor <- ggproto(
+  "ScaleMilestoneColor",
+  ScaleMilestoneFillColour,
+  aesthetics = c("colour")
+)
+
+#' Milestone scales
+#' @name scale_milestones
+
+#' @rdname scale_milestones
 #' @export
-scale_milestones_fillcolour <- function(name = "Milestone") {
-  ggproto(NULL, ScaleMilestoneFillColour, name = name)
+scale_milestones_fill <- function(name = "Milestone", milestone_colors = NULL) {
+  ggproto(NULL, ScaleMilestoneFill, name = name, milestone_colors = milestone_colors)
+}
+
+#' @rdname scale_milestones
+#' @export
+scale_milestones_color <- function(name = "Milestone", milestone_colors = NULL) {
+  ggproto(NULL, ScaleMilestoneColor, name = name, milestone_colors = milestone_colors)
 }
 
 color_milestone_percentages <- function(milestone_percentages, milestone_colors) {
+  assert_that(!is.null(milestone_colors))
+
   mix_colors <- function(milid, milpct) {
     color_rgb <- apply(milestone_colors[milid,,drop = FALSE], 2, function(x) sum(x * milpct))
     color_rgb[color_rgb < 0] <- 0

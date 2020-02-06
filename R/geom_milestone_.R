@@ -35,6 +35,36 @@ geom_milestone_label <- function(
   )
 }
 
+
+GeomMilestonePoint <- ggproto(
+  "GeomMilestoneLabel",
+  GeomPoint,
+  draw_panel = function(self, data, panel_params, coord, shadow, ...) {
+    original_draw_panel <- GeomPoint$draw_panel
+
+    # draw point ---------
+    grob_point <- original_draw_panel(data = data, coord = coord, panel_params = panel_params, ...)
+
+    # draw shadows --------
+    assert_that(is.list(shadow) || isFALSE(shadow), msg = "shadow should be a list created by shadow_defaults() or FALSE")
+    if (is.list(shadow)) {
+      grob_point_shadow <- original_draw_panel(
+        data = data %>% mutate(colour = shadow$color, size = size + shadow$size), panel_params = panel_params, coord = coord, ...)
+    } else {
+      grob_point_shadow <- grid::grob()
+    }
+
+    # combine grobs
+    grid::gList(
+      grob_point_shadow,
+      grob_point
+    )
+  },
+  # this function is just here so that shadow becomes a parameter
+  draw_group = function(data, panel_params, coord, shadow) {
+  }
+)
+
 #' @export
 geom_milestone_point <- function(
   mapping = NULL,
@@ -42,12 +72,13 @@ geom_milestone_point <- function(
   position = "identity",
   show.legend = NA,
   size = 10,
+  shadow = shadow_defaults(),
   ...
 ) {
-  mapping <- aesIntersect(mapping, aes_(x=~x, y=~y))
-  layer(data = data, mapping = mapping, stat = StatIdentity, geom = GeomPoint,
+  mapping <- aesIntersect(mapping, aes_(x=~x, y=~y, color=~milestone_id))
+  layer(data = data, mapping = mapping, stat = StatIdentity, geom = GeomMilestonePoint,
         position = position, show.legend = show.legend, inherit.aes = FALSE,
-        params = lst(na.rm = FALSE, size = size, ...)
+        params = lst(na.rm = FALSE, size = size, shadow = shadow, ...)
   )
 }
 

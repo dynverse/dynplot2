@@ -4,7 +4,12 @@
 \alias{dynplot_dendro}
 \title{Dendrogram layout of a trajectory}
 \usage{
-dynplot_dendro(dataset, trajectory = dataset, diag_offset = 0.05)
+dynplot_dendro(
+  dataset,
+  trajectory = dataset,
+  diag_offset = 0.05,
+  y_offset = 0.2
+)
 }
 \arguments{
 \item{dataset}{A dataset created by \code{\link[dynwrap:wrap_data]{wrap_data()}} or \code{\link[dynwrap:wrap_expression]{wrap_expression()}}}

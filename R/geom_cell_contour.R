@@ -1,11 +1,11 @@
-GeomGroupingDensity <- ggproto(
-  "GeomGroupingDensity",
+GeomCellContour <- ggproto(
+  "GeomCellContour",
   GeomPolygon,
-  default_aes = aesIntersect(GeomPolygon$default_aes, GeomPolygon$default_aes)
+  default_aes = aesIntersect(aes(alpha = 0.2), GeomPolygon$default_aes)
 )
 
-StatGroupingDensity <- ggproto(
-  "StatGroupingDensity",
+StatCellContour <- ggproto(
+  "StatCellContour",
   StatDensity2d,
   setup_params = function(data, params) {
     xlims <- c(min(data$x), max(data$x))
@@ -30,23 +30,32 @@ StatGroupingDensity <- ggproto(
 
     params
   },
-  compute_group = function(data, scales, bandwidth_x, bandwidth_y, xlims, ylims, na.rm = F,  resolution = 200, density_cutoff = 1, relative_bandwidth = NULL, padding = NULL) {
+  compute_group = function(data, scales, bandwidth_x, bandwidth_y, xlims, ylims, na.rm = F, resolution = 200, relative_density_cutoff = 0.2, relative_bandwidth = NULL, padding = NULL) {
     density <- MASS::kde2d(data$x, data$y, h = c(bandwidth_x, bandwidth_y), lims = c(xlims, ylims), n = resolution)
     df <- expand.grid(x = density$x, y = density$y)
     df$group <- data$group[1]
     df$z <- as.vector(density$z)
 
-    output2 <- ggplot2:::contour_lines(df, breaks = density_cutoff, complete = TRUE)
+    density_cutoff <- min(df$z) + (max(df$z) - min(df$z)) * relative_density_cutoff
+
+    output2 <- ggplot2:::contour_lines(df, breaks = density_cutoff, complete = FALSE)
 
     output2
   }
 )
 
-geom_grouping_density <- function(
+#' Plot contour around cells based
+#'
+#' @param relative_density_cutoff At whtat level of density the contour should be drawn, should be between 0 and 1
+#' @param relative_bandwidth Bandwidth calculated relative to the x and y limits of the points, should be between 0 and 1
+#' @param resolution The higher, the more accurate the polygon will be drawn at the cost of longer computing/drawing time
+#' @param padding How much padding to add to the limits, to avoid the contour to be drawn outside the plot
+geom_cell_contour <- function(
   mapping = NULL,
-  data = construct_get_density_info(),
+  data = construct_get_cell_info(),
+  relative_density_cutoff = 0.2,
   relative_bandwidth = 0.2,
-  padding = 0.2,
+  padding = 1,
   resolution = 200,
   ...,
   show.legend = NA
@@ -56,8 +65,8 @@ geom_grouping_density <- function(
   layer(
     data = data,
     mapping = mapping,
-    stat = StatGroupingDensity,
-    geom = GeomGroupingDensity,
+    stat = StatCellContour,
+    geom = GeomCellContour,
     position = "identity",
     show.legend = show.legend,
     inherit.aes = FALSE,
@@ -66,10 +75,8 @@ geom_grouping_density <- function(
       resolution = resolution,
       padding = padding,
       relative_bandwidth = relative_bandwidth,
+      relative_density_cutoff = relative_density_cutoff,
       ...
     )
   )
 }
-
-
-construct_get_density_info <- construct_get_cell_info

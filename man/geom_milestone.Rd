@@ -8,7 +8,7 @@ geom_milestone_label(
   mapping = NULL,
   data = get_milestone_info,
   ...,
-  show.legend = TRUE
+  show.legend = FALSE
 )
 }
 \arguments{

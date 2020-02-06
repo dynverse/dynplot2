@@ -68,10 +68,7 @@ geom_velocity_stream <- function(
   )
 }
 
-
-#' @param cell_positions The dimensionality reduction which contains at least x, y, x_future and y_future
-#' @param grid_n Number of rows and columns in the grid
-#' @param grid_sd Standard deviation for smoothing arrows
+#' @rdname embed_arrows
 embed_arrows_stream <- function(
   cell_positions,
   grid_bandwidth = 1/3,

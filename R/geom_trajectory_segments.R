@@ -10,9 +10,13 @@ GeomTrajectorySegments <- ggproto(
 
     # draw arrows -------
     # select the rows at draw_arrow and draw_arrow - 1
+    browser()
+
     data_arrows <- filter(data, draw_arrow | lead(draw_arrow)) %>%
-      mutate(group = ceiling(row_number() / 2)) %>%
-      mutate(size = size * arrow_size)
+      mutate(group = ceiling(row_number() / 2))
+
+    # the size of the arrow is scaled with the arrow size and segment size parameters (the first one of the latter)
+    arrow$length <- arrow$length * arrow_size * data_arrows$size[1]
 
     if (nrow(data_arrows) > 1) {
       grob_arrows <- original_draw_panel(data = data_arrows, panel_params = panel_params, coord = coord, arrow = arrow, lineend = "butt", linejoin = "mitre", ...)
@@ -37,7 +41,8 @@ GeomTrajectorySegments <- ggproto(
       grob_path
     )
   },
-  draw_group = function(data, panel_params, coord, arrow = NULL, arrow_size = 1, shadow = "black") {
+  # this function is just here so that shadow, arrow and arrow_size becomes a parameter
+  draw_group = function(data, panel_params, coord, arrow = NULL, arrow_size = 1, shadow) {
   },
   draw_key = function(data, params, size) {
     data$linetype[is.na(data$linetype)] <- 0

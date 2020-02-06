@@ -6,7 +6,7 @@
 #' @keywords plot_trajectory
 #'
 #' @export
-dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05) {
+dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05, y_offset = 0.2) {
   # root if necessary
   if ("root_milestone_id" %in% names(trajectory)) {
     root <- trajectory$root_milestone_id
@@ -46,7 +46,8 @@ dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05) {
         comp_1 = milestone_positions$comp_1[match(milestone_network_to$from, milestone_positions$node_id)] + milestone_network_to$length + diag_offset,
         comp_2 = map_dbl(milestone_network_to$to, ~mean(leaves_comp_2[descendants[[.]]])),
         parent_node_id = milestone_network_to$from,
-        edge_id = milestone_network_to$edge_id
+        edge_id = milestone_network_to$edge_id,
+        milestone_id = milestone_network_to$to
       )
     )
 
@@ -65,6 +66,7 @@ dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05) {
     mutate(
       child_node_id = node_id,
       comp_1 = milestone_positions_to$comp_1[match(parent_node_id, milestone_positions_to$node_id)] + diag_offset,
+      milestone_id = parent_node_id,
       node_id = paste0(parent_node_id, "-", node_id)
     )
 
@@ -86,6 +88,8 @@ dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05) {
   connection_positions <- tibble(
     from = milestone_positions_from$parent_node_id,
     to = milestone_positions_from$node_id
+  ) %>% filter(
+    from != root
   ) %>%
     left_join(
       milestone_positions %>% select(node_id, comp_1, comp_2) %>% rename_all(~paste0(., "_from")),
@@ -125,10 +129,16 @@ dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05) {
       comp_2 = comp_2_from
     )
 
+  # add quasirandom
+  cell_positions <- cell_positions %>%
+    mutate(
+      comp_2 = comp_2 + vipor::offsetX(comp_1, edge_id, method = "quasirandom", width = y_offset)
+    )
+
   # clean up milestone positions & edges
   milestone_positions <- milestone_positions %>%
-    filter(node_type == "milestone") %>%
-    select(milestone_id = node_id, comp_1, comp_2)
+    # filter(node_type == "milestone") %>%
+    select(milestone_id, comp_1, comp_2)
 
   edge_positions <- edge_positions %>%
     select(from, to, comp_1_from, comp_2_from, comp_1_to, comp_2_to)

@@ -71,7 +71,7 @@ construct_get_velocity_info <- function(position) {
 }
 
 
-#' @param cell_positions Dataframe contains at least x, y, x_future and y_future
+#' @rdname embed_arrows
 embed_arrows_cells <- function(cell_positions) {
   cell_positions %>%
     mutate(
@@ -79,17 +79,19 @@ embed_arrows_cells <- function(cell_positions) {
     )
 }
 
-#' @param cell_positions Dataframe contains at least x, y, x_future and y_future
+#' @rdname embed_arrows
 embed_arrows_random <- function(cell_positions, n_cells = 100) {
   embed_arrows_cells(cell_positions) %>%
     sample_n(min(nrow(cell_positions), n_cells))
 }
 
 
-
+#' Embed velocity arrows in a grid
 #' @param cell_positions The dimensionality reduction which contains at least x, y, x_future and y_future
 #' @param grid_n Number of rows and columns in the grid
 #' @param grid_bandwidth Bandwidth relative to the spacing of the grid
+#'
+#' @rdname embed_arrows
 embed_arrows_grid <- function(
   cell_positions,
   grid_n = c(15, 15),
