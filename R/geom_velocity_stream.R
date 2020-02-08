@@ -110,9 +110,11 @@ embed_arrows_stream <- function(
   streamplot_data <- streamplot_data %>%
     mutate(diff = (lead(x) - x_future) + (lead(y) - y_future)) %>%
     mutate(line = lag(cumsum(diff != 0), default = 0)) %>%
+    mutate(order = row_number()) %>%
     group_by(x, y) %>% # remove duplicate x and y coordinates
     slice(1) %>%
-    ungroup()
+    ungroup() %>%
+    arrange(order)
 
   # calculate other statistics for each line
   streamplot_data <- streamplot_data %>%
