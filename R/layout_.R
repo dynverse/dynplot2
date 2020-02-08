@@ -51,7 +51,7 @@ dynplot_dimred <- function(dataset, trajectory = dataset, dimred = dataset$dimre
     &&
     identical(trajectory_dimred[1, ], dimred[1, ], )
     &&
-    !all(c("dimred_edge_positions", "dimred_segment_positions", "dimred_segment_progressions") %in% names(trajectory))
+    all(c("dimred_edge_positions", "dimred_segment_positions", "dimred_segment_progressions") %in% names(trajectory))
   )
 
   if (!is.null(dataset$dimred_future)) {
@@ -77,7 +77,6 @@ dynplot_dimred <- function(dataset, trajectory = dataset, dimred = dataset$dimre
 
   # trajectory --------------------------------------------------------------
   if (dynwrap::is_wrapper_with_trajectory(trajectory)) {
-
     # trajectory dimred
     if (!recalculate_traj_dimred) {
       traj_dimred <- trajectory

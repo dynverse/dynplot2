@@ -72,8 +72,8 @@ dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05, y_
 
   # combine positions
   milestone_positions <- bind_rows(
-    milestone_positions_to %>% mutate(node_type = "milestone"),
-    milestone_positions_from %>% mutate(node_type = "fake_milestone")
+    milestone_positions_to %>% mutate(node_type = "milestone") %>% mutate(hjust = 0),
+    milestone_positions_from %>% mutate(node_type = "fake_milestone") %>% mutate(hjust = 1)
   )
 
   # now generate network between milestones
@@ -138,7 +138,7 @@ dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05, y_
   # clean up milestone positions & edges
   milestone_positions <- milestone_positions %>%
     # filter(node_type == "milestone") %>%
-    select(milestone_id, comp_1, comp_2)
+    select(milestone_id, comp_1, comp_2, hjust)
 
   edge_positions <- edge_positions %>%
     select(from, to, comp_1_from, comp_2_from, comp_1_to, comp_2_to)

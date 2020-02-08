@@ -22,17 +22,7 @@ ScaleMilestoneFillColour <- ggproto(
     }
 
     self$milestone_ids <- milestone_ids
-    if (length(milestone_ids) > 0 && is.null(self$milestone_colors)) {
-      self$milestone_colors <- milestone_palette(length(milestone_ids)) %>%
-        set_names(milestone_ids) %>%
-        col2rgb() %>%
-        t()
-    } else if(length(milestone_ids) > 0 && is.character(self$milestone_colors)) {
-      # convert from color to rgb matrix
-      self$milestone_colors <- self$milestone_colors %>%
-        col2rgb() %>%
-        t()
-    }
+    self$milestone_colors <- define_milestone_colors(self$milestone_colors, self$milestone_ids)
   },
   train = function(self, x) {
     print("train")
@@ -56,9 +46,7 @@ ScaleMilestoneFillColour <- ggproto(
     y
   },
   get_breaks = function(self) {
-    map(self$milestone_ids, function(milestone_id) {
-      tibble(milestone_id = milestone_id, percentage = 1)
-    })
+    milestone_percentage_breaks(self$milestone_ids)
   },
   get_labels = function(self, breaks) {
     self$milestone_ids
@@ -99,6 +87,30 @@ scale_milestones_color <- function(name = "Milestone", milestone_colors = NULL) 
 #' @export
 scale_milestones_colour <- scale_milestones_color
 
+
+#' Helper functions for coloring milestones
+#' @rdname helpers_milestone_coloring
+#' @export
+define_milestone_colors <- function(milestone_colors, milestone_ids) {
+  if (length(milestone_ids) > 0 && is.null(milestone_colors)) {
+    milestone_colors <- milestone_palette(length(milestone_ids)) %>%
+      set_names(milestone_ids) %>%
+      col2rgb() %>%
+      t()
+  } else if(length(milestone_ids) > 0 && is.character(milestone_colors)) {
+    # convert from color to rgb matrix
+    milestone_colors <- milestone_colors %>%
+      col2rgb() %>%
+      t()
+  }
+
+  milestone_colors
+}
+
+#' @rdname helpers_milestone_coloring
+#' @param milestone_percentages A tibble of milestone percentages of a particular cell
+#' @param milestone_colors The matrix linking milestones to RGB, as created by define_milestone_colors
+#' @export
 color_milestone_percentages <- function(milestone_percentages, milestone_colors) {
   assert_that(!is.null(milestone_colors))
 
@@ -110,4 +122,12 @@ color_milestone_percentages <- function(milestone_percentages, milestone_colors)
   }
 
   mix_colors(as.character(milestone_percentages$milestone_id), milestone_percentages$percentage)
+}
+
+#' @rdname helpers_milestone_coloring
+#' @export
+milestone_percentage_breaks <- function(milestone_ids) {
+  map(milestone_ids, function(milestone_id) {
+    tibble(milestone_id = milestone_id, percentage = 1)
+  })
 }
