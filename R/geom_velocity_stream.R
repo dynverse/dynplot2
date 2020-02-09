@@ -9,11 +9,19 @@ GeomVelocityStream <- ggproto(
     grob_path <- original_draw_panel(data = data, panel_params = panel_params, coord = coord, arrow = NULL, lineend = data$lineend[[1]], linejoin = data$linejoin[[1]], ...)
 
     # draw arrows -------
-    # select the rows at draw_arrow and draw_arrow - 1
+    # select the two rows closest to percentage 0.5
     data_arrows <- data %>%
       group_by(group) %>%
-      filter(row_number() == floor(n()/2) | lead(row_number()) == floor(n()/2)) %>%
-      mutate(size = size * arrow_size)
+      mutate(
+        draw_arrow = (row_number() == which.min(abs(percentage - 0.5)))
+      ) %>%
+      filter(
+        draw_arrow | lag(draw_arrow)
+      ) %>%
+      ungroup()
+
+    # the size of the arrow is scaled with the arrow size and segment size parameters (the first one of the latter)
+    arrow$length <- arrow$length * arrow_size * data_arrows$size[1]
 
     if (nrow(data_arrows) > 1) {
       grob_arrows <- original_draw_panel(data = data_arrows, panel_params = panel_params, coord = coord, arrow = arrow, lineend = "butt", linejoin = "mitre", ...)
@@ -27,7 +35,8 @@ GeomVelocityStream <- ggproto(
   },
 
   draw_group = function(data, panel_params, coord, arrow = NULL, arrow_size = 1, shadow = "black") {
-  }
+  },
+  required_aes = union(GeomPath$required_aes, c("percentage"))
 )
 
 #' Plotting velocity
@@ -49,7 +58,7 @@ geom_velocity_stream <- function(
   data = construct_get_velocity_info(stat),
   show.legend = NA
 ) {
-  mapping <- aesIntersect(mapping, aes_(x=~x, y=~y, group=~line))
+  mapping <- aesIntersect(mapping, aes_(x=~x, y=~y, group=~line, percentage=~percentage))
 
   layer(
     data = data,
@@ -118,11 +127,11 @@ embed_arrows_stream <- function(
 
   # calculate other statistics for each line
   streamplot_data <- streamplot_data %>%
-    arrange(line) %>%
+    mutate(length = sqrt((x_future - x) ** 2 + (y_future - y) ** 2)) %>%
     group_by(line) %>%
     mutate(
-      percentage = row_number() / n(), step = row_number(),
-
+      cumlength = cumsum(length),
+      percentage = cumlength / max(cumlength)
     )
 
   # streamplot_data <- streamplot_data %>% filter(line == 25)
