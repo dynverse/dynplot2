@@ -17,7 +17,7 @@ geom_velocity_arrow(
 geom_velocity_stream(
   mapping = NULL,
   stat = stat_velocity_stream(),
-  arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type = "closed"),
+  arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type = "open"),
   arrow_size = 1,
   ...,
   data = construct_get_velocity_info(stat),
