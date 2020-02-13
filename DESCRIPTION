@@ -13,7 +13,6 @@ RoxygenNote: 7.0.2
 SystemRequirements: libudunits2-dev (deb) or udunits2-devel (rpm)
 URL: https://github.com/dynverse/dynplot2
 BugReports: https://github.com/dynverse/dynplot2/issues
-dynplot
 Depends:
   R (>= 3.0.0)
 Imports:
