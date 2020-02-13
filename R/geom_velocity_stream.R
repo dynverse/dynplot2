@@ -52,7 +52,7 @@ GeomVelocityStream <- ggproto(
 geom_velocity_stream <- function(
   mapping = NULL,
   stat = stat_velocity_stream(),
-  arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type = "open"),
+  arrow = ggplot2::arrow(length = ggplot2::unit(0.5, "cm"), type = "closed"),
   arrow_size = 1,
   ...,
   data = construct_get_velocity_info(stat),
