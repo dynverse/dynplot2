@@ -90,6 +90,7 @@ scale_milestones_colour <- scale_milestones_color
 
 #' Helper functions for coloring milestones
 #' @rdname helpers_milestone_coloring
+#' @importFrom grDevices col2rgb
 #' @export
 define_milestone_colors <- function(milestone_colors, milestone_ids) {
   if (length(milestone_ids) > 0 && is.null(milestone_colors)) {

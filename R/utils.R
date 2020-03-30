@@ -1,4 +1,5 @@
 # copied from package rje because it was causing problems
+#' @importFrom grDevices rgb
 cubeHelix <- function (n, start = 0.5, r = -1.5, hue = 1, gamma = 1)
 {
   M = matrix(c(-0.14861, -0.29227, 1.97294, 1.78277, -0.90649, 0), ncol = 2)

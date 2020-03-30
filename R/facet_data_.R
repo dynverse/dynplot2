@@ -1,5 +1,7 @@
 #' Grid facetting based on data
 #'
+#' @importFrom stringr str_glue
+#'
 #' @examples
 #' cutoff <- function(x, cutoff) {
 #'   x > cutoff
@@ -99,6 +101,8 @@ facet_grid_data <- function(...) {
 
 
 #' Wrap facetting based on data
+#'
+#' @importFrom stringr str_glue
 #'
 #' @examples
 #' cutoff <- function(x, cutoff) {

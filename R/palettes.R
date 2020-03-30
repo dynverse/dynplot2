@@ -1,6 +1,7 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices rainbow
 #' @importFrom shades hue
+#' @importFrom utils head
 milestone_palette_list <- list(
   cubeHelix = function(n) cubeHelix(n = n),
   Set3 = function(n) {

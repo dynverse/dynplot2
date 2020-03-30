@@ -7,15 +7,12 @@
 #' @return A ggplot2 object, with the processed data in `plot$data` and `attr(plot$data, "data")`
 #'
 #' @examples
-#' if (requireNamespace("dyntoy", quietly = TRUE)) {
-#'   library(ggplot2)
-#'   toy <- dyntoy::generate_dataset()
-#'   dynplot_dimred(toy) +
-#'     geom_cell_point(aes(colour = select_expression("G1"))) +
-#'     scale_expression_colour() +
-#'     new_scale_fillcolour() +
-#'     geom_trajectory_segments(aes(colour = edge_id))
-#' }
+#' library(ggplot2)
+#' dynplot_dimred(example_bifurcating) +
+#'   geom_cell_point(aes(colour = select_feature_expression("G1", d = .data))) +
+#'   scale_expression_colour() +
+#'   new_scale_colour() +
+#'   geom_trajectory_segments(aes(colour = edge_id))
 #'
 #' @import dynwrap
 #' @import ggplot2
