@@ -3,13 +3,14 @@
 #' @importFrom stringr str_glue
 #'
 #' @examples
+#' library(ggplot2)
 #' cutoff <- function(x, cutoff) {
 #'   x > cutoff
 #' }
 #'
-#' d <- tibble(
+#' d <- data.frame(
 #'   x = 1:100,
-#'   y = sqrt(x)
+#'   y = sqrt(1:100)
 #' )
 #'
 #' ggplot(d) +
@@ -105,13 +106,14 @@ facet_grid_data <- function(...) {
 #' @importFrom stringr str_glue
 #'
 #' @examples
+#' library(ggplot2)
 #' cutoff <- function(x, cutoff) {
 #'   x > cutoff
 #' }
 #'
-#' d <- tibble(
+#' d <- data.frame(
 #'   x = 1:100,
-#'   y = sqrt(x)
+#'   y = sqrt(1:100)
 #' )
 #'
 #' ggplot(d) +
