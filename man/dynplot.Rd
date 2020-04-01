@@ -20,11 +20,11 @@ A ggplot2 object, with the processed data in \code{plot$data} and \code{attr(plo
 Create a dynplot with a specified layout
 }
 \examples{
-toy <- dyntoy::generate_dataset()
-dynplot(dataset) +
-  geom_cell_point(aes(colour = select_expression("G1"))) +
-  scale_expression_fillcolour() +
-  new_scale_fillcolour() +
+library(ggplot2)
+dynplot_dimred(example_bifurcating) +
+  geom_cell_point(aes(colour = select_feature_expression("G1", d = .data))) +
+  scale_expression_colour() +
+  new_scale_colour() +
   geom_trajectory_segments(aes(colour = edge_id))
 
 }

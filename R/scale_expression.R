@@ -11,6 +11,7 @@ common_colorbar_legend <- guide_colorbar(
 
 
 # from https://carto.com/carto-colors/
+#' @importFrom stringr str_split
 ScaleExpressionColour <- ggproto(
   "ScaleExpressionColour",
   scale_colour_gradientn(colours = stringr::str_split("#fcde9c,#faa476,#f0746e,#e34f6f,#dc3977,#b9257a,#7c1d6f", ",")[[1]]),
@@ -37,7 +38,7 @@ scale_expression_colour <- scale_expression_color <- function(name = "Expression
 #' @rdname scale_expression
 scale_expression_color <- scale_expression_colour
 
-
+#' @importFrom stringr str_split
 ScaleExpressionFill <- ggproto(
   "ScaleExpressionFill",
   scale_fill_gradientn(colours = stringr::str_split("#fcde9c,#faa476,#f0746e,#e34f6f,#dc3977,#b9257a,#7c1d6f", ",")[[1]]),

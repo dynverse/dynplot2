@@ -10,13 +10,14 @@ facet_wrap_data(..., nrow = NULL, ncol = 4, labeller = NULL)
 Wrap facetting based on data
 }
 \examples{
+library(ggplot2)
 cutoff <- function(x, cutoff) {
   x > cutoff
 }
 
-d <- tibble(
+d <- data.frame(
   x = 1:100,
-  y = sqrt(x)
+  y = sqrt(1:100)
 )
 
 ggplot(d) +

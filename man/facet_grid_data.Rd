@@ -10,13 +10,14 @@ facet_grid_data(...)
 Grid facetting based on data
 }
 \examples{
+library(ggplot2)
 cutoff <- function(x, cutoff) {
   x > cutoff
 }
 
-d <- tibble(
+d <- data.frame(
   x = 1:100,
-  y = sqrt(x)
+  y = sqrt(1:100)
 )
 
 ggplot(d) +

@@ -127,11 +127,11 @@ dynplot_dendro(dataset) +
 #   geom_trajectory_segments(aes(color = milestone_percentages)) +
 #   geom_trajectory_connection() +
 #   geom_milestone_label(aes(fill = milestone_id, hjust = as.integer(type == "end"))) +
-#   scale_milestones_fillcolour() +
-#   new_scale_fillcolour() +
+#   scale_milestones_colour() +
+#   new_scale_fill() +
 #   geom_expression_raster() +
-#   scale_expression_fillcolour() +
-#   new_scale_fillcolour() +
+#   scale_expression_fill() +
+#   new_scale_fill() +
 #   geom_tile(aes(x = x, y = 1))
 ```
 

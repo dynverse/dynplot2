@@ -1,6 +1,10 @@
 #' @export
+#' @importFrom stringr str_glue
 select_feature_expression <- function(feature_id, d, expression_source = "expression", scale = dynutils::scale_quantile) {
-  assert_that(!missing(d) && class(d) == "rlang_data_pronoun", msg = str_glue("The second argument of select_feature_expression should be {crayon::italic('.data')} or {crayon::italic('d = .data')}"))
+  assert_that(
+    !missing(d) && class(d) == "rlang_data_pronoun",
+    msg = str_glue("The second argument of select_feature_expression should be {crayon::italic('.data')} or {crayon::italic('d = .data')}")
+  )
 
   # to get the correct expression, we need two additional data objects:
   # - the dataset from which we can get the expression
@@ -41,11 +45,13 @@ select_feature_expression <- function(feature_id, d, expression_source = "expres
   out
 }
 
-
-
+#' @importFrom stringr str_glue
 #' @export
 select_feature_velocity <- function(feature_id, d) {
-  assert_that(!missing(d) && class(d) == "rlang_data_pronoun", msg = str_glue("The second argument of select_feature_velocity should be {crayon::italic('.data')} or {crayon::italic('d = .data')}"))
+  assert_that(
+    !missing(d) && class(d) == "rlang_data_pronoun",
+    msg = str_glue("The second argument of select_feature_velocity should be {crayon::italic('.data')} or {crayon::italic('d = .data')}")
+  )
 
   feature_expression <- select_feature_expression(feature_id, d, "expression")
   feature_expression_future <- select_feature_expression(feature_id, d, "expression_future")

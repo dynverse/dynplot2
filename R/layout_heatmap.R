@@ -16,6 +16,8 @@ layout_heatmap <- function(
   )
 }
 
+#' @importFrom stats kmeans
+#' @importFrom Matrix t
 #' @export
 get_features <- function(dataset, n_modules = 5, num_features = 100) {
   feature_importances <- dynfeature::calculate_overall_feature_importance(dataset)
@@ -36,7 +38,7 @@ get_features <- function(dataset, n_modules = 5, num_features = 100) {
   feature_modules
 }
 
-
+#' @importFrom stats cor
 #' @export
 layout_modules <- function(dataset, feature_modules, cell_layout, margin = 0.02) {
   margin <- margin * nrow(feature_modules)

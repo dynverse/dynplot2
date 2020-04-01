@@ -4,6 +4,3 @@
 \name{dynplot2}
 \alias{dynplot2}
 \title{Plot all the trajectories, in a modular fashion}
-\description{
-Plot all the trajectories, in a modular fashion
-}
