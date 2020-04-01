@@ -41,6 +41,15 @@ dynplot <- function(
     )
   }
 
+  # add pseudotime info if available
+  if (!is.null(trajectory$pseudotime)) {
+    cell_info <- left_join(
+      cell_info,
+      enframe(trajectory$pseudotime, "cell_id", "pseudotime"),
+      "cell_id"
+    )
+  }
+
   # grouping ----------------------------------------------------------------
   if ("grouping" %in% names(dataset)) {
     cell_info <- left_join(
