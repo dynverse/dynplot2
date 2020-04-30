@@ -62,7 +62,7 @@ scale_expression_fill <- function(name = "Expression", ...){
 
 
 
-
+#' @export
 scale_velocity_fill <- function(name = "Velocity", guide = common_colorbar_legend, ...) {
   center_limits <- function(limits) {
     if (abs(limits[[1]]) > abs(limits[[2]])) {
@@ -83,7 +83,7 @@ scale_velocity_fill <- function(name = "Velocity", guide = common_colorbar_legen
   )
 }
 
-
+#' @export
 scale_velocity_color <- function(name = "Velocity", guide = common_colorbar_legend, ...) {
   center_limits <- function(limits) {
     if (abs(limits[[1]]) > abs(limits[[2]])) {
