@@ -51,7 +51,7 @@ dynplot_dimred <- function(dataset, trajectory = dataset, dimred = dataset$dimre
     &&
     identical(trajectory_dimred[1, ], dimred[1, ], )
     &&
-    all(c("dimred_edge_positions", "dimred_segment_positions", "dimred_segment_progressions") %in% names(trajectory))
+    all(c("dimred_segment_points", "dimred_segment_progressions") %in% names(trajectory))
   )
 
   if (!is.null(dataset$dimred_future)) {
