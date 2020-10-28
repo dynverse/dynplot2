@@ -38,7 +38,22 @@ StatCellContour <- ggproto(
 
     density_cutoff <- min(df$z) + (max(df$z) - min(df$z)) * relative_density_cutoff
 
-    output2 <- ggplot2:::contour_lines(df, breaks = density_cutoff, complete = FALSE)
+    # output2 <- ggplot2:::contour_lines(df, breaks = density_cutoff, complete = FALSE)
+
+    lines <- isoband::isolines(density$x, density$y, t(density$z), levels = density_cutoff)[[1]]
+
+    # plot <- qplot(data$x, data$y)
+    # plot + geom_point(aes(lines$x, lines$y))
+
+    # ggplot(df) +
+    #   geom_tile(aes(x, y, color = z)) +
+    #   geom_point(aes(x, y), data = data)
+
+    output2 <- tibble(
+      y = lines$y,
+      x = lines$x
+    )
+    # browser()
 
     output2
   }
