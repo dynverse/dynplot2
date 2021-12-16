@@ -117,7 +117,7 @@ facet_grid_data <- function(...) {
 #' )
 #'
 #' ggplot(d) +
-#'   geom_text(aes(x, y, color = x > cutoff, label = hello)) +
+#'   geom_text(aes(x, y, color = x > cutoff, label = x)) +
 #'   facet_wrap_data(cutoff = c(1, 5, 15))
 #'
 #' @export

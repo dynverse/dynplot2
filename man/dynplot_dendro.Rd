@@ -14,7 +14,7 @@ dynplot_dendro(
 \arguments{
 \item{dataset}{A dataset created by \code{\link[dynwrap:wrap_data]{wrap_data()}} or \code{\link[dynwrap:wrap_expression]{wrap_expression()}}}
 
-\item{trajectory}{The trajectory as created by \code{\link[dynwrap:infer_trajectory]{infer_trajectory()}} or \code{\link[dynwrap:add_trajectory]{add_trajectory()}}}
+\item{trajectory}{The trajectory as created by \code{\link[dynwrap:infer_trajectories]{infer_trajectory()}} or \code{\link[dynwrap:add_trajectory]{add_trajectory()}}}
 
 \item{diag_offset}{The x-offset (percentage of the edge lenghts) between milestones}
 }
