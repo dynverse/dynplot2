@@ -11,6 +11,8 @@
 #'
 #' @return A ggplot2 object, with the processed data in `plot$data` and `attr(plot$data, "data")`.
 #'
+#' @seealso [dynplot_dendro()], [dynplot_dimred()], [dynplot_graph()] or [dynplot_onedim()]
+#'
 #' @examples
 #' library(ggplot2)
 #' dynplot_dimred(example_bifurcating) +

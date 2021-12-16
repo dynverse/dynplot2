@@ -31,3 +31,6 @@ dynplot_dimred(example_bifurcating) +
   geom_trajectory_segments(aes(colour = edge_id))
 
 }
+\seealso{
+\code{\link[=dynplot_dendro]{dynplot_dendro()}}, \code{\link[=dynplot_dimred]{dynplot_dimred()}}, \code{\link[=dynplot_graph]{dynplot_graph()}} or \code{\link[=dynplot_onedim]{dynplot_onedim()}}
+}

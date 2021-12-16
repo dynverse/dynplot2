@@ -1,11 +1,37 @@
-#' Dendrogram layout of a trajectory
+#' Plot a trajectory as a dendrogram
 #'
-#' @inheritParams dynwrap::common_param
-#' @param diag_offset The x-offset (percentage of the edge lenghts) between milestones
+#' @inheritParams dynplot
+#' @param diag_offset The x-offset (percentage of the edge lengths) between milestones
+#' @param y_offset The y-offset (percentage of the edge lengths) between milestones
 #'
-#' @keywords plot_trajectory
+#' @return A ggplot2 object, with the processed data in `plot$data` and `attr(plot$data, "data")`.
+#'
+#' @seealso [dynplot_dendro()], [dynplot_dimred()], [dynplot_graph()] or [dynplot_onedim()]
 #'
 #' @export
+#' @examples
+#' data(example_bifurcating)
+#' dataset <- example_bifurcating
+#'
+#' dynplot_dendro(dataset) +
+#'   geom_trajectory_segments() +
+#'   geom_trajectory_connection() +
+#'   geom_cell_point(size = 2, colour = "black") +
+#'   geom_cell_point(aes(colour = milestone_percentages), size = 1.8) +
+#'   geom_milestone_label(aes(fill = milestone_id)) +
+#'   scale_milestones_fill() +
+#'   scale_milestones_colour()
+#'
+#' dynplot_dendro(dataset) +
+#'   geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
+#'   geom_trajectory_connection() +
+#'   scale_milestones_colour() +
+#'   new_scale_colour() +
+#'   geom_cell_point(aes(colour = select_feature_expression("G1", d = .data))) +
+#'   scale_expression_colour() +
+#'   new_scale_colour() +
+#'   geom_milestone_label(aes(fill = milestone_id)) +
+#'   scale_milestones_fill()
 dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05, y_offset = 0.2) {
   # root if necessary
   if ("root_milestone_id" %in% names(trajectory)) {
