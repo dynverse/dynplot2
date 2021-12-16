@@ -22,12 +22,7 @@ ScaleMilestoneFillColour <- ggproto(
     }
 
     self$milestone_ids <- milestone_ids
-    if (length(milestone_ids) > 0) {
-      self$milestone_colors <- milestone_palette(length(milestone_ids)) %>%
-        set_names(milestone_ids) %>%
-        col2rgb() %>%
-        t()
-    }
+    self$milestone_colors <- define_milestone_colors(self$milestone_colors, self$milestone_ids)
   },
   train = function(self, x) {
     print("train")
@@ -47,12 +42,11 @@ ScaleMilestoneFillColour <- ggproto(
     }
 
     y <- map_chr(x, color_milestone_percentages, milestone_colors = self$milestone_colors)
+
     y
   },
   get_breaks = function(self) {
-    map(self$milestone_ids, function(milestone_id) {
-      tibble(milestone_id = milestone_id, percentage = 1)
-    })
+    milestone_percentage_breaks(self$milestone_ids)
   },
   get_labels = function(self, breaks) {
     self$milestone_ids
@@ -61,12 +55,66 @@ ScaleMilestoneFillColour <- ggproto(
   values = NULL
 )
 
+
+ScaleMilestoneFill <- ggproto(
+  "ScaleMilestoneFill",
+  ScaleMilestoneFillColour,
+  aesthetics = c("fill")
+)
+
+ScaleMilestoneColor <- ggproto(
+  "ScaleMilestoneColor",
+  ScaleMilestoneFillColour,
+  aesthetics = c("colour")
+)
+
+#' Milestone scales
+#' @name scale_milestones
+
+#' @rdname scale_milestones
 #' @export
-scale_milestones_fillcolour <- function(name = "Milestone") {
-  ggproto(NULL, ScaleMilestoneFillColour, name = name)
+scale_milestones_fill <- function(name = "Milestone", milestone_colors = NULL) {
+  ggproto(NULL, ScaleMilestoneFill, name = name, milestone_colors = milestone_colors)
 }
 
+#' @rdname scale_milestones
+#' @export
+scale_milestones_color <- function(name = "Milestone", milestone_colors = NULL) {
+  ggproto(NULL, ScaleMilestoneColor, name = name, milestone_colors = milestone_colors)
+}
+
+#' @rdname scale_milestones
+#' @export
+scale_milestones_colour <- scale_milestones_color
+
+
+#' Helper functions for coloring milestones
+#' @rdname helpers_milestone_coloring
+#' @importFrom grDevices col2rgb
+#' @export
+define_milestone_colors <- function(milestone_colors, milestone_ids) {
+  if (length(milestone_ids) > 0 && is.null(milestone_colors)) {
+    milestone_colors <- milestone_palette(length(milestone_ids)) %>%
+      set_names(milestone_ids) %>%
+      col2rgb() %>%
+      t()
+  } else if(length(milestone_ids) > 0 && is.character(milestone_colors)) {
+    # convert from color to rgb matrix
+    milestone_colors <- milestone_colors %>%
+      col2rgb() %>%
+      t()
+  }
+
+  milestone_colors
+}
+
+#' @rdname helpers_milestone_coloring
+#' @param milestone_percentages A tibble of milestone percentages of a particular cell
+#' @param milestone_colors The matrix linking milestones to RGB, as created by define_milestone_colors
+#' @export
 color_milestone_percentages <- function(milestone_percentages, milestone_colors) {
+  assert_that(!is.null(milestone_colors))
+
   mix_colors <- function(milid, milpct) {
     color_rgb <- apply(milestone_colors[milid,,drop = FALSE], 2, function(x) sum(x * milpct))
     color_rgb[color_rgb < 0] <- 0
@@ -75,4 +123,12 @@ color_milestone_percentages <- function(milestone_percentages, milestone_colors)
   }
 
   mix_colors(as.character(milestone_percentages$milestone_id), milestone_percentages$percentage)
+}
+
+#' @rdname helpers_milestone_coloring
+#' @export
+milestone_percentage_breaks <- function(milestone_ids) {
+  map(milestone_ids, function(milestone_id) {
+    tibble(milestone_id = milestone_id, percentage = 1)
+  })
 }

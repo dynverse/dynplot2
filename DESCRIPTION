@@ -1,53 +1,61 @@
 Package: dynplot2
 Type: Package
-Title: Grammar of graphics for single-cell data
-Version: 1.0.0
+Title: Modular trajectory plotting
+Version: 1.1.0
 Authors@R: c(
   person("Robrecht", "Cannoodt", email = "rcannood@gmail.com", role = c("aut")),
   person("Wouter", "Saelens", email = "wouter.saelens@gmail.com", role = c("aut", "cre")))
-Description: Package that create ggplot2 plots of single-cell datasets.
-License: GPL-3
+Description: Finetune visualisations of trajectories using ggplot2's grammar of graphics principles.
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.1.1
 SystemRequirements: libudunits2-dev (deb) or udunits2-devel (rpm)
+URL: https://github.com/dynverse/dynplot2
+BugReports: https://github.com/dynverse/dynplot2/issues
 Depends:
   R (>= 3.0.0)
 Imports:
   assertthat,
   cowplot,
   dplyr,
+  digest,
   dynutils (>= 1.0.2),
   dynfeature (>= 1.0.0),
   dyndimred (>= 1.0.0),
   dynwrap (>= 1.0.0),
   GA,
   ggbeeswarm,
+  ggnewscale,
   ggplot2 (>= 3.0),
   ggraph,
   ggrepel,
+  grDevices,
   igraph,
   MASS,
   magrittr,
+  Matrix,
   methods,
   purrr,
-  rje,
-  shades,
+  reticulate,
+  rlang,
   RColorBrewer,
   reshape2,
+  scvelo,
+  shades,
+  stats,
+  stringr,
   testthat,
   tibble,
   tidyr,
   tidygraph,
+  utils,
   vipor,
   viridis
 Suggests:
   knitr,
   rmarkdown
-Remotes:  
-    dynverse/dynutils@master,
-    dynverse/dyndimred@master,
-    dynverse/dynwrap@master,
-    dynverse/dynfeature@master
+Remotes:
+  dynverse/scvelo@devel
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)

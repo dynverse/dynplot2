@@ -1,6 +1,16 @@
+#' Add a new scale
 #' @export
-
+#' @rdname new_scale
 new_scale <- ggnewscale::new_scale
 
 #' @export
-new_scale_fillcolour <- function() {list(new_scale("colour"), new_scale("fill"))}
+#' @rdname new_scale
+new_scale_color <- ggnewscale::new_scale_color
+
+#' @export
+#' @rdname new_scale
+new_scale_colour <- ggnewscale::new_scale_colour
+
+#' @export
+#' @rdname new_scale
+new_scale_fill <- ggnewscale::new_scale_fill

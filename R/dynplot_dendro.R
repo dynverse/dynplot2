@@ -1,12 +1,39 @@
-#' Dendrogram layout of a trajectory
+#' Plot a trajectory as a dendrogram
 #'
-#' @inheritParams dynwrap::common_param
-#' @param diag_offset The x-offset (percentage of the edge lenghts) between milestones
+#' @inheritParams dynplot
+#' @param diag_offset The x-offset (percentage of the edge lengths) between milestones
+#' @param y_offset The y-offset (percentage of the edge lengths) between milestones
 #'
-#' @keywords plot_trajectory
+#' @return A ggplot2 object, with the processed data in `plot$data` and `attr(plot$data, "data")`.
+#'
+#' @seealso [dynplot_dendro()], [dynplot_dimred()], [dynplot_graph()] or [dynplot_onedim()]
 #'
 #' @export
-layout_dendro <- function(trajectory, diag_offset = 0.05) {
+#' @examples
+#' library(ggplot2)
+#' data(example_bifurcating)
+#' dataset <- example_bifurcating
+#'
+#' dynplot_dendro(dataset) +
+#'   geom_trajectory_segments() +
+#'   geom_trajectory_connection() +
+#'   geom_cell_point(size = 2, colour = "black") +
+#'   geom_cell_point(aes(colour = milestone_percentages), size = 1.8) +
+#'   geom_milestone_label(aes(fill = milestone_id)) +
+#'   scale_milestones_fill() +
+#'   scale_milestones_colour()
+#'
+#' dynplot_dendro(dataset) +
+#'   geom_trajectory_segments(aes(color = milestone_percentages), size = 5, color = "#333333") +
+#'   geom_trajectory_connection() +
+#'   scale_milestones_colour() +
+#'   new_scale_colour() +
+#'   geom_cell_point(aes(colour = select_feature_expression("G1", d = .data))) +
+#'   scale_expression_colour() +
+#'   new_scale_colour() +
+#'   geom_milestone_label(aes(fill = milestone_id)) +
+#'   scale_milestones_fill()
+dynplot_dendro <- function(dataset, trajectory = dataset, diag_offset = 0.05, y_offset = 0.2) {
   # root if necessary
   if ("root_milestone_id" %in% names(trajectory)) {
     root <- trajectory$root_milestone_id
@@ -46,7 +73,8 @@ layout_dendro <- function(trajectory, diag_offset = 0.05) {
         comp_1 = milestone_positions$comp_1[match(milestone_network_to$from, milestone_positions$node_id)] + milestone_network_to$length + diag_offset,
         comp_2 = map_dbl(milestone_network_to$to, ~mean(leaves_comp_2[descendants[[.]]])),
         parent_node_id = milestone_network_to$from,
-        edge_id = milestone_network_to$edge_id
+        edge_id = milestone_network_to$edge_id,
+        milestone_id = milestone_network_to$to
       )
     )
 
@@ -65,13 +93,14 @@ layout_dendro <- function(trajectory, diag_offset = 0.05) {
     mutate(
       child_node_id = node_id,
       comp_1 = milestone_positions_to$comp_1[match(parent_node_id, milestone_positions_to$node_id)] + diag_offset,
+      milestone_id = parent_node_id,
       node_id = paste0(parent_node_id, "-", node_id)
     )
 
   # combine positions
   milestone_positions <- bind_rows(
-    milestone_positions_to %>% mutate(node_type = "milestone"),
-    milestone_positions_from %>% mutate(node_type = "fake_milestone")
+    milestone_positions_to %>% mutate(node_type = "milestone") %>% mutate(hjust = 0),
+    milestone_positions_from %>% mutate(node_type = "fake_milestone") %>% mutate(hjust = 1)
   )
 
   # now generate network between milestones
@@ -86,6 +115,8 @@ layout_dendro <- function(trajectory, diag_offset = 0.05) {
   connection_positions <- tibble(
     from = milestone_positions_from$parent_node_id,
     to = milestone_positions_from$node_id
+  ) %>% filter(
+    from != root
   ) %>%
     left_join(
       milestone_positions %>% select(node_id, comp_1, comp_2) %>% rename_all(~paste0(., "_from")),
@@ -125,10 +156,16 @@ layout_dendro <- function(trajectory, diag_offset = 0.05) {
       comp_2 = comp_2_from
     )
 
+  # add quasirandom
+  cell_positions <- cell_positions %>%
+    mutate(
+      comp_2 = comp_2 + vipor::offsetX(comp_1, edge_id, method = "quasirandom", width = y_offset)
+    )
+
   # clean up milestone positions & edges
   milestone_positions <- milestone_positions %>%
-    filter(node_type == "milestone") %>%
-    select(milestone_id = node_id, comp_1, comp_2)
+    # filter(node_type == "milestone") %>%
+    select(milestone_id, comp_1, comp_2, hjust)
 
   edge_positions <- edge_positions %>%
     select(from, to, comp_1_from, comp_2_from, comp_1_to, comp_2_to)
@@ -139,7 +176,7 @@ layout_dendro <- function(trajectory, diag_offset = 0.05) {
   segment_progressions <- segments$segment_progressions
   segment_positions <- segments$segment_positions
 
-  lst(
+  layout <- lst(
     milestone_positions = milestone_positions %>% rename_dimred_xy(),
     edge_positions = edge_positions %>% rename_dimred_xy(),
     cell_positions = cell_positions %>% rename_dimred_xy(),
@@ -148,4 +185,9 @@ layout_dendro <- function(trajectory, diag_offset = 0.05) {
     connection_positions = connection_positions %>% rename_dimred_xy()
   )
 
+  dynplot(
+    dataset = dataset,
+    trajectory = trajectory,
+    layout = layout
+  )
 }

@@ -195,19 +195,24 @@ calculate_connections <- function(linearised) {
   # get all connections that are necessary
   # direct connections are those that are reachable without up
   connections <- crossing(
-    linearised$edge_positions %>% select(from, comp_1_from),
-    linearised$edge_positions %>% select(to, comp_1_to)
+    linearised$edge_positions %>% select(.data$from, .data$comp_1_from),
+    linearised$edge_positions %>% select(.data$to, .data$comp_1_to)
   ) %>% filter(
-    from == to,
-    comp_1_from != comp_1_to
+    .data$from == .data$to,
+    .data$comp_1_from != .data$comp_1_to
   ) %>% mutate(
-    comp_1_diff = abs(comp_1_to-comp_1_from)
+    comp_1_diff = abs(.data$comp_1_to - .data$comp_1_from)
   ) %>%
-    arrange(comp_1_diff) %>%
-    select(milestone_id = from, comp_1_from, comp_1_to, comp_1_diff) %>%
+    arrange(.data$comp_1_diff) %>%
+    select(
+      milestone_id = .data$from,
+      .data$comp_1_from,
+      .data$comp_1_to,
+      .data$comp_1_diff
+    ) %>%
     mutate(
       level = NA,
-      direct = near(comp_1_diff, linearised$margin)
+      direct = near(.data$comp_1_diff, linearised$margin)
     )
 
   for (i in seq_len(nrow(connections))) {
@@ -215,31 +220,49 @@ calculate_connections <- function(linearised) {
 
     overlapping_connections <- connections %>%
       filter(
-        dplyr::row_number() < i,
-        pmax(comp_1_from, comp_1_to) > min(connection$comp_1_from, connection$comp_1_to),
-        pmin(comp_1_from, comp_1_to) < max(connection$comp_1_from, connection$comp_1_to)
+        row_number() < i,
+        pmax(.data$comp_1_from, .data$comp_1_to) > min(connection$comp_1_from, connection$comp_1_to),
+        pmin(.data$comp_1_from, .data$comp_1_to) < max(connection$comp_1_from, connection$comp_1_to)
       )
 
     if (nrow(overlapping_connections)) {
-      connections$level[i] <- max(overlapping_connections$level) + 1
+      connections$level[[i]] <- max(overlapping_connections$level) + 1
     } else {
-      if (connections$direct[i]) {
-        connections$level[i] <- 0
+      if (connections$direct[[i]]) {
+        connections$level[[i]] <- 0
       } else {
-        connections$level[i] <- 1
+        connections$level[[i]] <- 1
       }
     }
   }
 
   # calculate connection positions
-  connections_direct <- connections %>% filter(direct)
-  connections_indirect <- connections %>% filter(!direct)
+  connections_direct <- connections %>% filter(.data$direct)
+  connections_indirect <- connections %>% filter(!.data$direct)
 
   connection_positions <- bind_rows(
-    connections_direct %>% mutate(connection_ix = 1, comp_2_from = 0, comp_2_to = 0),
-    connections_indirect %>% mutate(comp_1_to = comp_1_from, comp_2_from = 0, comp_2_to = level, connection_ix = 1),
-    connections_indirect %>% mutate(comp_2_from = level, comp_2_to = level, connection_ix = 2),
-    connections_indirect %>% mutate(comp_1_from = comp_1_to, comp_2_from = level, comp_2_to = 0, connection_ix = 3)
+    connections_direct %>% mutate(
+      connection_ix = 1,
+      comp_2_from = 0,
+      comp_2_to = 0
+    ),
+    connections_indirect %>% mutate(
+      comp_1_to = .data$comp_1_from,
+      comp_2_from = 0,
+      comp_2_to = .data$level,
+      connection_ix = 1
+    ),
+    connections_indirect %>% mutate(
+      comp_2_from = .data$level,
+      comp_2_to = .data$level,
+      connection_ix = 2
+    ),
+    connections_indirect %>% mutate(
+      comp_1_from = .data$comp_1_to,
+      comp_2_from = .data$level,
+      comp_2_to = 0,
+      connection_ix = 3
+    )
   )
 
   connection_positions

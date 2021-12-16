@@ -4,13 +4,17 @@
 \alias{geom_milestone_label}
 \title{Plotting milestones}
 \usage{
-geom_milestone_label(mapping = NULL, data = get_milestone_info, ...,
-  show.legend = TRUE)
+geom_milestone_label(
+  mapping = NULL,
+  data = get_milestone_info,
+  ...,
+  show.legend = FALSE
+)
 }
 \arguments{
 \item{mapping}{Set of aesthetic mappings created by aes().}
 
-\item{data}{A function created by \code{\link[=get_cell_info_constructor]{get_cell_info_constructor()}}.}
+\item{data}{A function created by \code{\link[=construct_get_cell_info]{construct_get_cell_info()}}.}
 
 \item{show.legend}{Whether to show a legend for this geom}
 }

@@ -1,6 +1,7 @@
 #' @importFrom RColorBrewer brewer.pal
 #' @importFrom grDevices rainbow
 #' @importFrom shades hue
+#' @importFrom utils head
 milestone_palette_list <- list(
   cubeHelix = function(n) cubeHelix(n = n),
   Set3 = function(n) {
@@ -15,7 +16,8 @@ milestone_palette_list <- list(
       # milestone_palette_list$cubeHelix(n)
       all_colors <- grDevices::colors()[grep('gr(a|e)y', grDevices::colors(), invert = T)]
       all_colors <- all_colors[order(shades::hue(all_colors))][-c(1:2)] # sort and remove white/black
-      all_colors[seq(0, length(all_colors), length(all_colors)/(n+1)) %>% ceiling() %>% head(-1)]
+      ix <- ceiling(seq(0, length(all_colors), length(all_colors)/(n+1)))
+      all_colors[head(ix, -1)]
     }
   }
 )
@@ -24,6 +26,8 @@ milestone_palette_list <- list(
 #' @param n The number of colours to be in the palette.
 #'
 #' @rdname get_milestone_palette_names
+#'
+#' @export
 milestone_palette <- function(n, name = "auto") {
   milestone_palette_list[[name]](n)
 }
