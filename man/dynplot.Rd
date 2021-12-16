@@ -7,17 +7,20 @@
 dynplot(dataset, trajectory, layout)
 }
 \arguments{
-\item{dataset}{A dynwrap dataset object, typically containing a trajectory}
+\item{dataset}{A dynwrap dataset object, typically containing a trajectory.}
 
-\item{trajectory}{The trajectory dynwrap object, if available}
+\item{trajectory}{The trajectory dynwrap object, if available.}
 
-\item{layout}{A \verb{layout_*} function from dynplot, such as \code{\link[=layout_dimred]{layout_dimred()}} or \code{\link[=layout_graph]{layout_graph()}}}
+\item{layout}{A layout list object. Can contain data frames \code{cell_positions}, \code{milestone_positions}, \code{edge_positions}, \code{segment_positions}, \code{segment_progressions}.}
 }
 \value{
-A ggplot2 object, with the processed data in \code{plot$data} and \code{attr(plot$data, "data")}
+A ggplot2 object, with the processed data in \code{plot$data} and \code{attr(plot$data, "data")}.
 }
 \description{
-Create a dynplot with a specified layout
+It's recommended you use one of the layout-specific dynplot functions such as
+\code{\link[=dynplot_dendro]{dynplot_dendro()}}, \code{\link[=dynplot_dimred]{dynplot_dimred()}}, \code{\link[=dynplot_graph]{dynplot_graph()}} or \code{\link[=dynplot_onedim]{dynplot_onedim()}}
+to start creating a new dynplot visualisation. Only use this function if you
+know how dynplot layouts work.
 }
 \examples{
 library(ggplot2)

@@ -1,4 +1,6 @@
-#' Plot all the trajectories, in a modular fashion
+#' Modular trajectory plotting
+#'
+#' Finetune visualisations of trajectories using ggplot2's grammar of graphics principles.
 #'
 #' @import dplyr
 #' @import tidyr

@@ -3,4 +3,7 @@
 \docType{package}
 \name{dynplot2}
 \alias{dynplot2}
-\title{Plot all the trajectories, in a modular fashion}
+\title{Modular trajectory plotting}
+\description{
+Finetune visualisations of trajectories using ggplot2's grammar of graphics principles.
+}

@@ -1,10 +1,15 @@
 #' Create a dynplot with a specified layout
 #'
-#' @param dataset A dynwrap dataset object, typically containing a trajectory
-#' @param trajectory The trajectory dynwrap object, if available
-#' @param layout A `layout_*` function from dynplot, such as [layout_dimred()] or [layout_graph()]
+#' It's recommended you use one of the layout-specific dynplot functions such as
+#' [dynplot_dendro()], [dynplot_dimred()], [dynplot_graph()] or [dynplot_onedim()]
+#' to start creating a new dynplot visualisation. Only use this function if you
+#' know how dynplot layouts work.
 #'
-#' @return A ggplot2 object, with the processed data in `plot$data` and `attr(plot$data, "data")`
+#' @param dataset A dynwrap dataset object, typically containing a trajectory.
+#' @param trajectory The trajectory dynwrap object, if available.
+#' @param layout A layout list object. Can contain data frames `cell_positions`, `milestone_positions`, `edge_positions`, `segment_positions`, `segment_progressions`.
+#'
+#' @return A ggplot2 object, with the processed data in `plot$data` and `attr(plot$data, "data")`.
 #'
 #' @examples
 #' library(ggplot2)
@@ -13,9 +18,6 @@
 #'   scale_expression_colour() +
 #'   new_scale_colour() +
 #'   geom_trajectory_segments(aes(colour = edge_id))
-#'
-#' @import dynwrap
-#' @import ggplot2
 #'
 #' @export
 dynplot <- function(
