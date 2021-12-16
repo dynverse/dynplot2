@@ -14,6 +14,8 @@
 #' @import purrr
 #' @importFrom assertthat assert_that
 #' @importFrom magrittr %<>% %$% set_rownames set_colnames
+#' @importFrom utils head tail
+#' @importFrom rlang %|% quo_text quo eval_tidy
 #'
 #' @docType package
 #' @name dynplot2

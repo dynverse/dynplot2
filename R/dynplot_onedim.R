@@ -8,6 +8,7 @@
 #'
 #' @export
 #' @examples
+#' library(ggplot2)
 #' data(example_bifurcating)
 #' dataset <- example_bifurcating
 #'

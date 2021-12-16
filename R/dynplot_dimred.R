@@ -9,7 +9,8 @@
 #'
 #' @export
 #' @examples
-#' data(example_bifurcating)``
+#' library(ggplot2)
+#' data(example_bifurcating)
 #' dataset <- example_bifurcating
 #'
 #' dynplot_dimred(dataset) +

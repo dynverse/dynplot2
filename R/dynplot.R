@@ -68,9 +68,10 @@ dynplot <- function(
     milestone_id_levels <- trajectory$milestone_ids
 
     # add milestone percentages to cell info
-    cell_info_milestone_percentages <- trajectory$milestone_percentages %>%
-      mutate(milestone_id = factor(milestone_id, milestone_id_levels)) %>%
-      nest(milestone_percentages = c(milestone_id, percentage)) %>%
+    cell_info_milestone_percentages <-
+      trajectory$milestone_percentages %>%
+      mutate(milestone_id = factor(.data$milestone_id, milestone_id_levels)) %>%
+      nest(milestone_percentages = c(.data$milestone_id, .data$percentage)) %>%
       deframe()
     cell_info$milestone_percentages <- unname(cell_info_milestone_percentages[cell_info$cell_id])
 
@@ -79,8 +80,8 @@ dynplot <- function(
       milestone_id = trajectory$milestone_ids
     ) %>%
       mutate(
-        labelling = trajectory$milestone_labelling[milestone_id] %||% NA_character_,
-        label = case_when(is.na(labelling) ~ milestone_id, TRUE ~ labelling)
+        labelling = trajectory$milestone_labelling[.data$milestone_id] %||% NA_character_,
+        label = .data$labelling %|% .data$milestone_id
       ) %>%
       left_join(layout$milestone_positions, "milestone_id") %>%
       mutate(milestone_id = factor(milestone_id, milestone_id_levels))
@@ -90,7 +91,7 @@ dynplot <- function(
       bind_cols(
         trajectory$milestone_network
       ) %>%
-      mutate(edge_id = paste0(from, "->", to), label = edge_id) %>%
+      mutate(edge_id = paste0(.data$from, "->", .data$to), label = .data$edge_id) %>%
       left_join(layout$edge_positions, c("from", "to"))
 
     data <- c(data, lst(
@@ -101,24 +102,24 @@ dynplot <- function(
     if ("segment_progressions" %in% names(layout)) {
       # segment info (produced by layout)
       segment_info <- layout$segment_progressions %>%
-        mutate(edge_id = paste0(from, "->", to)) %>%
-        arrange(edge_id, percentage) %>%
+        mutate(edge_id = paste0(.data$from, "->", .data$to)) %>%
+        arrange(.data$edge_id, .data$percentage) %>%
         left_join(layout$segment_positions, "point_id") %>%
-        left_join(trajectory$milestone_network %>% select(-length), c("from", "to"))
+        left_join(trajectory$milestone_network %>% select(-.data$length), c("from", "to"))
 
       # get milestone percentages of segments from progressions
       segment_milestone_percentages <- convert_progressions_to_milestone_percentages(
         cell_ids = trajectory$cell_ids,
         milestone_ids = trajectory$milestone_ids,
         milestone_network = trajectory$milestone_network,
-        progressions = segment_info %>% mutate(cell_id = point_id)
+        progressions = segment_info %>% mutate(cell_id = .data$point_id)
       ) %>%
         mutate(
-          point_id = cell_id,
-          milestone_id = factor(milestone_id, milestone_id_levels)
+          point_id = .data$cell_id,
+          milestone_id = factor(.data$milestone_id, milestone_id_levels)
         ) %>%
-        select(-cell_id) %>%
-        nest(milestone_percentages = c(milestone_id, percentage)) %>%
+        select(-.data$cell_id) %>%
+        nest(milestone_percentages = c(.data$milestone_id, .data$percentage)) %>%
         deframe()
       segment_info$milestone_percentages <- segment_milestone_percentages[segment_info$point_id]
 
@@ -154,7 +155,8 @@ dynplot <- function(
 
 
   # plot --------------------------------------------------------------------
-  p <- ggplot(data = cell_info) +
+  p <-
+    ggplot(data = cell_info) +
     theme_dynplot()
   class(p) <- c("dynplot", class(p))
   p

@@ -43,15 +43,29 @@ construct_get_expression_info <- function(rescale) {
     feature_info <- attr(data, "data")$feature_info
     cell_info <- attr(data, "data")$cell_info
 
-    expression <- get_expression(attr(data, "data")$dataset)[cell_info$cell_id, feature_info$feature_id]
+    # fetch data
+    expression <- get_expression(attr(data, "data")$dataset)
 
+    # ensure exact subset and ordering
+    expression <- expression[cell_info$cell_id, feature_info$feature_id, drop = FALSE]
+
+    # rescale expression
     expression <- rescale(expression)
 
-    expression_info <- reshape2::melt(as.matrix(expression), varnames = c("cell_id", "feature_id"), value.name = "expression") %>%
-      mutate(cell_id = as.character(cell_id), feature_id = as.character(feature_id))
+    # reshape into data frame
+    expression_info <- reshape2::melt(
+      as.matrix(expression),
+      varnames = c("cell_id", "feature_id"),
+      value.name = "expression"
+    ) %>%
+      mutate(
+        cell_id = as.character(.data$cell_id),
+        feature_id = as.character(.data$feature_id)
+      )
 
+    # add info data frames
     expression_info %>%
       left_join(feature_info, "feature_id") %>%
-      left_join(cell_info %>% select(-y), "cell_id")
+      left_join(cell_info %>% select(-.data$y), "cell_id")
   }
 }

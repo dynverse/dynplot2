@@ -20,7 +20,8 @@ A ggplot2 object, with the processed data in \code{plot$data} and \code{attr(plo
 Plot a trajectory based on a dimensionality reduction
 }
 \examples{
-data(example_bifurcating)``
+library(ggplot2)
+data(example_bifurcating)
 dataset <- example_bifurcating
 
 dynplot_dimred(dataset) +

@@ -112,17 +112,17 @@ construct_get_segment_info <- function(position_arrow = position_trajectory_arro
 
 # calculates the length of each part of the trajectory segments
 # used to position the arrows nicely
-#' @importFrom utils head tail
 calculate_trajectory_segment_length <- function(data) {
   data %>%
-    group_by(from, to) %>%
+    group_by(.data$from, .data$to) %>%
     mutate(
       length = c(
         0,
-        sqrt((head(y, -1) - tail(y, -1))**2 + (head(x, -1) - tail(x, -1))**2)
+        sqrt((head(.data$y, -1) - tail(.data$y, -1))**2 + (head(.data$x, -1) - tail(.data$x, -1))**2)
       ),
-      cumlength = cumsum(length)
-    )
+      cumlength = cumsum(.data$length)
+    ) %>%
+    ungroup()
 }
 
 

@@ -27,6 +27,7 @@ A ggplot2 object, with the processed data in \code{plot$data} and \code{attr(plo
 Plot a trajectory as a dendrogram
 }
 \examples{
+library(ggplot2)
 data(example_bifurcating)
 dataset <- example_bifurcating
 
